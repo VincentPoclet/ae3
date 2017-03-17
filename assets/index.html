@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AE3 - Autant En Emporte l'Event</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
+	<script src="lib/jquery.min.js"></script>
+	<script src="lib/angular.min.js"></script>
+	<script src="lib/angular-route.min.js"></script>
+	<script src="lib/bootstrap/js/bootstrap.js"></script>
+	<script async defer	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2y0e-JdpOMMgJkwiN16jZExQ2fINrq2E"></script>
+	<link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="ae3">
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#!/">AE3</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#!/">Home</a></li>
+					<li><a href="#!/addEvent">Add Event</a></li>
+					<!-- <li><a href="#about">About</a></li>
+					<li><a href="#contact">Contact</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Action</a></li>
+							<li><a href="#">Another action</a></li>
+							<li><a href="#">Something else here</a></li>
+							<li role="separator" class="divider"></li>
+							<li class="dropdown-header">Nav header</li>
+							<li><a href="#">Separated link</a></li>
+							<li><a href="#">One more separated link</a></li>
+						</ul>
+					</li> -->
+				</ul> 
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#!/login">Login</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div style="height: 65px;"></div>
+	<div id="container" class="container-fluid" ng-view></div>
+</body>
+
+<script>
+	var app = angular.module("ae3", ["ngRoute"]);
+	app.config(function($routeProvider) {
+		$routeProvider
+		.when("/", {
+			templateUrl : "templates/mainTemplate.html",
+			controller: "mainController",
+			controllerAs: "mainJS"
+		}).when("/login", {
+			templateUrl : "templates/loginTemplate.html",
+			controller: "loginController",
+			controllerAs: "loginJS"
+		}).when("/register", {
+			templateUrl : "templates/registerTemplate.html",
+			controller: "registerController",
+			controllerAs: "registerJS"
+		}).when("/addEvent", {
+			templateUrl : "templates/addEventTemplate.html",
+			controller: "addEventController",
+			controllerAs: "addEventJS.js"
+		});
+	});
+</script>
+<script src="js/mainJS.js"></script>
+<script src="js/loginJS.js"></script>
+<script src="js/registerJS.js"></script>
+<script src="js/addEventJS.js"></script>
+
+</html>

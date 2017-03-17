@@ -1,0 +1,26 @@
+<div class="col-md-6 col-md-offset-3 col-xs-12">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<div class="panel-title">Log In</div>
+		</div>
+		<div class="panel-body">
+			<div id="wrcred" class="alert alert-danger"><b>An account has already been created with this e-mail address.</b></div>
+			<label class="control-label" for="nom">Name</label>
+			<input ng-model="nom" class="form-control" id="nom" type="text" />
+			<label class="control-label" for="prenom">Surname</label>
+			<input ng-model="surnom" class="form-control" id="prenom" type="text" />
+			<label class="control-label" for="email">E-mail</label>
+			<input ng-model="email" class="form-control" id="email" type="email" />
+			<label class="control-label" for="pw">Password</label>
+			<input ng-model="pw" class="form-control" id="pw" type="password" />
+			<label class="control-label" for="pwconf">Confirm</label>
+			<input class="form-control" id="pwconf" type="password" />
+			<div class="col-xs-12 text-right">
+				<a href="#!/login">I already have an account</a>
+			</div>
+		</div>
+		<div class="panel-footer text-center">
+			<button ng-click="register()" class="btn btn-primary">Submit</button>
+		</div>
+	</div>
+</div>
