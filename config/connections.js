@@ -41,10 +41,17 @@ module.exports.connections = {
   *                                                                          *
   ***************************************************************************/
   // someMysqlServer: {
+<<<<<<< Updated upstream
   //   adapter: '-sailsmysql',
   //   host: 'localhost',
   //   user: 'root', //optional
   //   password: '', //optional
+=======
+  //   adapter: 'sails-mysql',
+  //   host: 'localhost',
+  //   user: 'vincent', //optional
+  //   password: 'Welcome456.', //optional
+>>>>>>> Stashed changes
   //   database: 'ae3' //optional
   // },
 
