@@ -27,6 +27,8 @@ module.exports = {
 				if (err) {
 					return res.status(500).json({'err': err.message, 'data': row});
 				} 
+				req.session.user = {'id': row.id, 'prenom': row.prenomUser, 'nom': row.nomUser};
+				console.log(req.session.user);
 				return res.status(200).json({'err': null, 'data': row});
 			});
 		});
@@ -42,6 +44,8 @@ module.exports = {
 				return res.status(500).json({'err': err.message, 'data': row});
 			} 
 			if (row) {
+				req.session.user = {'id': row.id, 'prenom': row.prenomUser, 'nom': row.nomUser};
+				console.log(req.session.user);
 				return res.status(200).json({'err': null, 'data': row});
 			} else {
 				return res.status(400).json({'err': "User doesn't exists", 'data': null});
