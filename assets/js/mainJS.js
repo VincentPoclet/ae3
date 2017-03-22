@@ -28,14 +28,10 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 					// Current object
 					var obj = $scope.events[i];
 					console.log(obj);
-				// 	 var marker = new google.maps.Marker({
-				// 		position: new google.maps.LatLng(obj.lattEvent,obj.longEvent),
-				// 		map: map,
-				// 		title: "<div style = 'height:60px;width:200px'><b>Your location:</b><br />Latitude: " + p.coords.latitude + "<br />Longitude: " + p.coords.longitude
-				// });
+
 
 					// Adding a new marker for the object
-				var marker = new google.maps.Marker({
+					var marker = new google.maps.Marker({
 						position: new google.maps.LatLng(obj.lattEvent,obj.longEvent),
 						map: map,
 						animation: google.maps.Animation.DROP,
@@ -43,7 +39,10 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 					});
 					marker.addListener('click', toggleBounce);
 					var clicker = addClicker(marker, obj.title);
+					
 				}
+
+
 
 				// écoute les cliques de l'utilisateur pour créer un marker
 				google.maps.event.addListener(map, 'click', function(event) {
@@ -51,14 +50,29 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
   					placeMarker(event.latLng);
 				});
 
+
+
+
+
+
 				// écoute les cliques de l'utilisateur sur les markers déjà présent, affiche le titre de l'événement
 				function addClicker(marker, content) {
+					var infoWindow = new google.maps.InfoWindow({content : obj.title});
 					google.maps.event.addListener(marker, "click", function (e) {
-						var infoWindow = new google.maps.InfoWindow({content : obj.title});
 						infoWindow.setContent(marker.title);
 						infoWindow.open(map, marker);
 					});
+					var deleteButton = '<button id="modifyButton">modify</button><button id="deleteButton">Delete</button>';
+				    google.maps.event.addListener(marker, 'rightclick', function (e) {
+				        infoWindow.setContent(deleteButton);
+				        infoWindow.open(map, marker);
+				    });
 				}
+
+				
+
+
+
 
 
 				// effet d'animation du bouton
@@ -117,17 +131,46 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 					</div>
 					<div class='panel-footer text-center'>
 						<button ng-click='addEvent()' class='btn btn-primary'>Submit</button>
+                    </div>
 					</div>`;
 					showMarker(marker,form);
+					
 				}
+
+				$scope.addEvent = function() {
+					console.log("totototototto");
+    					$http({
+							url: "/api/event", 
+							method: "POST",
+							data: {
+								nomEvent: $scope.nomEvent,
+								adresse: "toto",
+								codePostal: "toto",
+								ville: "toto",
+								dateDebut: $scope.dateDebut,
+								dateFin: $scope.dateFin,
+								typeEvent: $scope.typeEvent,
+								descEvent: $scope.descEvent,
+								longEvent: $scope.longEvent,
+								lattEvent: $scope.lattEvent
+							}
+						}).then(function successCallback(response) {
+							$location.url("/");
+						}, function errorCallback(response) {
+							$("#wrcred").show();
+						});
+
+				}
+    			
+
 
 				// Montre les markers sur la maps
 				function showMarker(marker, content){
 						var infoWindow = new google.maps.InfoWindow({content : form});
 						//infoWindow.setContent(content);
 						infoWindow.open(map, marker);
-				}
 
+				}
 			});
 		}else { // si la position n'est pas disponible on affiche paris 
 			var LatLng = new google.maps.LatLng(48.858377,2.294460);
@@ -138,30 +181,6 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 				};
 			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 		}
-
-		$scope.addEvent = function() {
-			// alert("go !");
-			$http({
-				url: "/api/event", 
-				method: "POST",
-				data: {
-					nomEvent: $scope.nomEvent,
-					adresse: "toto",
-					codePostal: "toto",
-					ville: "toto",
-					dateDebut: $scope.dateDebut,
-					dateFin: $scope.dateFin,
-					typeEvent: $scope.typeEvent,
-					descEvent: $scope.descEvent,
-					longEvent: $scope.longEvent,
-					lattEvent: $scope.lattEvent
-				}
-			}).then(function successCallback(response) {
-				$location.url("/");
-			}, function errorCallback(response) {
-				$("#wrcred").show();
-			});
-		};
 	}, function errorCallback(response) {
 		alert("Error loading events");
 	});
