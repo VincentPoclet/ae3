@@ -84,9 +84,9 @@ module.exports = {
 				return res.status(500).json({'err': err, 'data': null});
 			}
 			if (!row) {
-				return res.status(400).json('err': 'No events found according to criterias', 'data': null);
+				return res.status(400).json({'err': 'No events found according to criterias', 'data': null});
 			}
-			return res.status(200).json('err': null, 'data': row);
+			return res.status(200).json({'err': null, 'data': row});
 		})
 	}
 };

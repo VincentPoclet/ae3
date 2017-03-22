@@ -4,6 +4,7 @@ var app = angular.module("ae3", ["ngRoute"]);
 
 app.config(function($routeProvider) {
 	$routeProvider
+	// when "/main/*"
 	.when("/", {
 		templateUrl : "templates/mainTemplate.html",
 		controller: "mainController",
@@ -20,13 +21,19 @@ app.config(function($routeProvider) {
 		templateUrl : "templates/addEventTemplate.html",
 		controller: "addEventController",
 		controllerAs: "addEventJS.js"
+	}).when("/planning", {
+		templateUrl : "templates/planningTemplate.html",
+		controller: "planningController",
+		controllerAs: "planningJS.js"
 	}).otherwise({
 		templateUrl : "templates/deadLink.html"
 	});
 });
 
-app.controller("indexController", function($scope, $http) {
+app.controller("indexController", function($scope, $http, $location) {
 	$scope.$on('$locationChangeStart', function(event) {
+		$scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
+		// $scope.includeMap = true;
 		if (!$scope.session) {
 			console.log("Fetch Session");
 			$http({
