@@ -10,8 +10,16 @@ module.exports = {
 		if (req.session.user) {
 			return res.status(200).json({'err': null, 'res' : req.session.user});
 		} else {
-			return res.status(400).json({'err': 'No active session', 'res' : null});
+			return res.status(200).json({'err': null, 'res' : false});
 		}
+	},
+	delete: function(req, res) {
+		req.session.destroy(function(err) {
+			if (err) {
+				return res.status(500).json({'err': err, 'res': null});
+			}
+			return res.status(200).json({'err': null, 'res': 0});
+		});
 	}
 };
 

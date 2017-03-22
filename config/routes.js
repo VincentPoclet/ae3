@@ -50,7 +50,10 @@ module.exports.routes = {
   'GET /api/user':'UsersController.select',
   'POST /api/event':'EventsController.create',
   'GET /api/event':'EventsController.select',
+  'DELETE /api/event':'EventsController.delete',
+  'PUT /api/event':'EventsController.update',
   'GET /api/session':'SessionController.select',
+  'DELETE /api/session':'SessionController.delete',
   // 'GET /api/user':'UserController.retrieve'
   // 'DELETE /api/user':'UserController.remove', etc... (+PUT)
 
