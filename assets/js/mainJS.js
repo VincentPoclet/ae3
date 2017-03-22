@@ -2,7 +2,7 @@
 
 
 
-angular.module("ae3").controller("mainController", function($scope, $http) {
+angular.module("ae3").controller("mainController", function($scope, $http, $compile) {
 	$http({
 		url: "/api/event", 
 		method: "GET"
@@ -10,7 +10,9 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 		// console.log(response);
 		var map;
 		var markers = [];
-		var form;
+		var content;
+		var compiledContent;
+		var infoWindow = [];
 		$scope.events = response.data.data;
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (p) {
@@ -37,7 +39,7 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 						animation: google.maps.Animation.DROP,
 						title: obj.nomEvent // this works, giving the marker a title with the correct title
 					});
-					marker.addListener('click', toggleBounce);
+					//marker.addListener('click', toggleBounce);
 					var clicker = addClicker(marker, obj.title);
 					
 				}
@@ -47,42 +49,38 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 				// écoute les cliques de l'utilisateur pour créer un marker
 				google.maps.event.addListener(map, 'click', function(event) {
 					clearMarkers();
+					for (var i = 0; i < infoWindow.length; i++) {
+				   	 infoWindow[i].setMap(null);
+				  	}
+					infoWindow=[];
   					placeMarker(event.latLng);
 				});
 
-
-
-
-
-
 				// écoute les cliques de l'utilisateur sur les markers déjà présent, affiche le titre de l'événement
 				function addClicker(marker, content) {
-					var infoWindow = new google.maps.InfoWindow({content : obj.title});
+					infoWindow = new google.maps.InfoWindow({content : obj.title});
 					google.maps.event.addListener(marker, "click", function (e) {
+						clearMarkers();
 						infoWindow.setContent(marker.title);
 						infoWindow.open(map, marker);
 					});
-					var deleteButton = '<button id="modifyButton">modify</button><button id="deleteButton">Delete</button>';
+					var deleteButton = `<button ng-click='modifyButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Modifier</button>&nbsp;<button ng-click='deleteButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Supprimer</button>'`;
 				    google.maps.event.addListener(marker, 'rightclick', function (e) {
+				    	clearMarkers();
 				        infoWindow.setContent(deleteButton);
 				        infoWindow.open(map, marker);
 				    });
 				}
 
-				
 
-
-
-
-
-				// effet d'animation du bouton
-				function toggleBounce() {
-				  if (marker.getAnimation() !== null) {
-				    marker.setAnimation(null);
-				  } else {
-				    marker.setAnimation(google.maps.Animation.BOUNCE);
-				  }
-				}
+				// // effet d'animation du bouton
+				// function toggleBounce() {
+				//   if (this.getAnimation() !== null) {
+				//     this.setAnimation(null);
+				//   } else {
+				//     this.setAnimation(google.maps.Animation.BOUNCE);
+				//   }
+				// }
 
 				
 				// Range tous les marqueurs dans un tableau
@@ -100,16 +98,17 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 
 				// Créer la marker sur la map
 				function placeMarker(location) {
+					clearMarkers();
 				    var marker = new google.maps.Marker({
 				        position: location, 
 				        map: map,
-				        title: location,
 				        animation: google.maps.Animation.DROP
 					});
-					marker.addListener('click', toggleBounce);
+					//marker.addListener('click', toggleBounce);
 					markers.push(marker);
-					form = `
+					content = `
 					<div class='panel-body'>
+						<label class='control-label'>Créer votre évenement!</label><br>
 						<label class='control-label'>Name</label>
 						<input ng-model='nomEvent' class='form-control' type='text' />
 						<label class='control-label'>Start Date</label>
@@ -124,53 +123,81 @@ angular.module("ae3").controller("mainController", function($scope, $http) {
 						</select>
 						<label class='control-label'>Description</label>
 						<textarea ng-model='descEvent' class='form-control'></textarea>
-						<label class='control-label'>Longitude</label>
-						<input ng-model='longEvent' class='form-control' type='text' value=`+ location.lng() +`></input>
-						<label class='control-label'>Lattitude</label>
-						<input ng-model='lattEvent' class='form-control' type='text' value=`+ location.lat() +`></input>
-					</div>
-					<div class='panel-footer text-center'>
-						<button ng-click='addEvent()' class='btn btn-primary'>Submit</button>
-                    </div>
-					</div>`;
-					showMarker(marker,form);
-					
+						<button ng-click='addEvent(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Submit</button>
+                    </div>`;
+
+                    compiledContent = $compile(content)($scope);
+					$scope.infoWindow = new google.maps.InfoWindow({content : ''});
+                    google.maps.event.addListener(marker, 'click', (function(marker, content, scope) {
+	                    return function() {
+	                        scope.infoWindow.setContent(content);
+	                        scope.infoWindow.open(scope.map, marker);
+	                    };
+                	})(marker, compiledContent[0], $scope));			
 				}
 
-				$scope.addEvent = function() {
-					console.log("totototototto");
+				$scope.addEvent = function(longitude,lattitude) {
+					// alert("clicked");
+					// console.log("totototototto");
     					$http({
 							url: "/api/event", 
 							method: "POST",
 							data: {
 								nomEvent: $scope.nomEvent,
 								adresse: "toto",
-								codePostal: "toto",
+								codePostal: "1234",
 								ville: "toto",
 								dateDebut: $scope.dateDebut,
 								dateFin: $scope.dateFin,
 								typeEvent: $scope.typeEvent,
 								descEvent: $scope.descEvent,
-								longEvent: $scope.longEvent,
-								lattEvent: $scope.lattEvent
+								longEvent: longitude,
+								lattEvent: lattitude
 							}
 						}).then(function successCallback(response) {
+								$location.url("/");
+							}, function errorCallback(response) {
+								alert(response);
+						});
+				}
+
+				$scope.modifyButton = function(longitude,lattitudelongitude,lattitude){
+					$http({
+						url: "/api/event", 
+						method: "PUT",
+						data: {
+							longEvent: longitude,
+							lattEvent: lattitude
+						}
+					}).then(function successCallback(response) {
 							$location.url("/");
 						}, function errorCallback(response) {
-							$("#wrcred").show();
-						});
-
+							alert(response);
+					});
 				}
     			
-
-
-				// Montre les markers sur la maps
-				function showMarker(marker, content){
-						var infoWindow = new google.maps.InfoWindow({content : form});
-						//infoWindow.setContent(content);
-						infoWindow.open(map, marker);
-
-				}
+    			$scope.deleteButton = function(longitude,lattitude){
+    				$http({
+						url: "/api/event", 
+						method: "DELETE",
+						data: {
+							nomEvent: $scope.nomEvent,
+							adresse: $scope.adresse,
+							codePostal: $scope.codePostal,
+							ville: $scope.ville,
+							dateDebut: $scope.dateDebut,
+							dateFin: $scope.dateFin,
+							typeEvent: $scope.typeEvent,
+							descEvent: $scope.descEvent,
+							longEvent: longitude,
+							lattEvent: lattitude
+						}
+					}).then(function successCallback(response) {
+							$location.url("/");
+						}, function errorCallback(response) {
+							alert(response);
+					});
+    			}
 			});
 		}else { // si la position n'est pas disponible on affiche paris 
 			var LatLng = new google.maps.LatLng(48.858377,2.294460);
