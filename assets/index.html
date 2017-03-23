@@ -11,8 +11,8 @@
 	<script async defer	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2y0e-JdpOMMgJkwiN16jZExQ2fINrq2E"></script>
 	<link rel="stylesheet" href="styles/main.css">
 </head>
-<body ng-app="ae3">
-	<nav ng-controller="indexController" class="navbar navbar-default navbar-fixed-top">
+<body ng-app="ae3" ng-controller="indexController">
+	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -55,7 +55,22 @@
 		</div>
 	</nav>
 	<div style="height: 65px;"></div>
-	<div id="container" class="container-fluid" ng-view></div>
+	<!-- ngswitch avec url + nginclude pour avoir la map quoiqu'il arrive -->
+	<!-- <div class="container-fluid" ng-view></div> -->
+	<div ng-switch="includeMap" class="container-fluid">
+		<div ng-switch-when="false" class="container-fluid">
+			<div ng-view></div>
+			<!-- <div>test</div> -->
+		</div>
+		<div ng-switch-when="true" class="container-fluid">
+			<div ng-view></div>
+			<!-- <div> {{includeMap}} </div> -->
+			<div ng-include src="'templates/deadLink.html'"></div>
+		</div>
+		<div ng-switch-default class="container-fluid">
+			<div ng-view></div>
+		</div>
+	</div>
 </body>
 
 <script src="js/indexJS.js">
