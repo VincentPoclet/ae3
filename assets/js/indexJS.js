@@ -28,7 +28,7 @@ app.config(function($routeProvider) {
 app.controller("indexController", function($scope, $http) {
 	$scope.$on('$locationChangeStart', function(event) {
 		if (!$scope.session) {
-			console.log("Fetch Session");
+			//console.log("Fetch Session");
 			$http({
 				url: "/api/session",
 				method: "GET"

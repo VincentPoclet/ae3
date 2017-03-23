@@ -32,15 +32,16 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 					console.log(obj);
 
 
+					var location = new google.maps.LatLng(obj.lattEvent,obj.longEvent);
 					// Adding a new marker for the object
 					var marker = new google.maps.Marker({
-						position: new google.maps.LatLng(obj.lattEvent,obj.longEvent),
+						position: location,
 						map: map,
 						animation: google.maps.Animation.DROP,
 						title: obj.nomEvent // this works, giving the marker a title with the correct title
 					});
 					//marker.addListener('click', toggleBounce);
-					var clicker = addClicker(marker, obj.title);
+					var clicker = addClicker(marker, obj.title, location);
 					
 				}
 
@@ -49,40 +50,42 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				// écoute les cliques de l'utilisateur pour créer un marker
 				google.maps.event.addListener(map, 'click', function(event) {
 					clearMarkers();
-					for (var i = 0; i < infoWindow.length; i++) {
-				   	 infoWindow[i].setMap(null);
-				  	}
-					infoWindow=[];
   					placeMarker(event.latLng);
 				});
 
 				// écoute les cliques de l'utilisateur sur les markers déjà présent, affiche le titre de l'événement
-				function addClicker(marker, content) {
-					infoWindow = new google.maps.InfoWindow({content : obj.title});
+				function addClicker(marker, content, location) {
+					clearMarkers();
+					infoWindow = new google.maps.InfoWindow({content : ''});
 					google.maps.event.addListener(marker, "click", function (e) {
 						clearMarkers();
+						if( $scope.infoWindow ) {
+           							$scope.infoWindow.close();
+       					}
 						infoWindow.setContent(marker.title);
 						infoWindow.open(map, marker);
 					});
-					var deleteButton = `<button ng-click='modifyButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Modifier</button>&nbsp;<button ng-click='deleteButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Supprimer</button>'`;
-				    google.maps.event.addListener(marker, 'rightclick', function (e) {
-				    	clearMarkers();
-				        infoWindow.setContent(deleteButton);
-				        infoWindow.open(map, marker);
-				    });
+					
+					
+					content = `
+					<div>
+					<button ng-click='modifyButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Modifier</button>
+					<button ng-click='deleteButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Supprimer</button>
+					</div>`;
+					compiledContent = $compile(content)($scope);
+                    $scope.infoWindow = new google.maps.InfoWindow({content : ''});
+                    google.maps.event.addListener(marker, 'rightclick', (function(marker, content, scope) {
+	                    return function() {
+	                    	clearMarkers();
+	                    	if( infoWindow ) {
+           							infoWindow.close();
+       						}
+	                        scope.infoWindow.setContent(content);
+	                        scope.infoWindow.open(scope.map, marker);
+	                    };
+                	})(marker, compiledContent[0], $scope));		
 				}
 
-
-				// // effet d'animation du bouton
-				// function toggleBounce() {
-				//   if (this.getAnimation() !== null) {
-				//     this.setAnimation(null);
-				//   } else {
-				//     this.setAnimation(google.maps.Animation.BOUNCE);
-				//   }
-				// }
-
-				
 				// Range tous les marqueurs dans un tableau
 				function setMapOnAll(map) {
 				  for (var i = 0; i < markers.length; i++) {
@@ -90,7 +93,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				  }
 				}
 
-				// Supprime tous les markers de la map tout en les gardant dans le tableau
+				// Supprime tous les markers de la map 
 				function clearMarkers(){
 					setMapOnAll(null);
 					markers = [];
@@ -123,6 +126,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 						</select>
 						<label class='control-label'>Description</label>
 						<textarea ng-model='descEvent' class='form-control'></textarea>
+						<br>
 						<button ng-click='addEvent(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Submit</button>
                     </div>`;
 
@@ -130,10 +134,15 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 					$scope.infoWindow = new google.maps.InfoWindow({content : ''});
                     google.maps.event.addListener(marker, 'click', (function(marker, content, scope) {
 	                    return function() {
+	                    	if( $scope.infoWindow ) {
+           						$scope.infoWindow.close();
+       						}else if (infoWindow){
+       							infoWindow.close();
+       						}
 	                        scope.infoWindow.setContent(content);
 	                        scope.infoWindow.open(scope.map, marker);
 	                    };
-                	})(marker, compiledContent[0], $scope));			
+                	})(marker, compiledContent[0], $scope));		
 				}
 
 				$scope.addEvent = function(longitude,lattitude) {
@@ -162,6 +171,8 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				}
 
 				$scope.modifyButton = function(longitude,lattitudelongitude,lattitude){
+					alert("clicked");
+					console.log("totototototto");
 					$http({
 						url: "/api/event", 
 						method: "PUT",
@@ -177,6 +188,8 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				}
     			
     			$scope.deleteButton = function(longitude,lattitude){
+    				alert("clicked");
+					console.log("totototototto");
     				$http({
 						url: "/api/event", 
 						method: "DELETE",
