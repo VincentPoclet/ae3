@@ -30,6 +30,7 @@ app.config(function($routeProvider) {
 	});
 });
 
+
 app.controller("indexController", function($scope, $http, $location) {
 	$scope.$on('$locationChangeStart', function(event) {
 		$scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
@@ -77,5 +78,5 @@ app.controller("indexController", function($scope, $http, $location) {
 			$scope.nomUser = "";
 			$scope.prenomUser = "";
 		})
-	}
+	};
 });

@@ -26,7 +26,7 @@
 			<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="#!/">Home</a></li>
-					<li><a href="#!/addEvent">Add Event</a></li>
+					<li><a href="#!/planning">Planning</a></li>
 					<!-- <li><a href="#about">About</a></li>
 					<li><a href="#contact">Contact</a></li>
 					<li class="dropdown">
@@ -73,32 +73,21 @@
 	</div>
 </body>
 
-<script src="js/indexJS.js">
-	// var app = angular.module("ae3", ["ngRoute"]);
-	// app.config(function($routeProvider) {
-	// 	$routeProvider
-	// 	.when("/", {
-	// 		templateUrl : "templates/mainTemplate.html",
-	// 		controller: "mainController",
-	// 		controllerAs: "mainJS"
-	// 	}).when("/login", {
-	// 		templateUrl : "templates/loginTemplate.html",
-	// 		controller: "loginController",
-	// 		controllerAs: "loginJS"
-	// 	}).when("/register", {
-	// 		templateUrl : "templates/registerTemplate.html",
-	// 		controller: "registerController",
-	// 		controllerAs: "registerJS"
-	// 	}).when("/addEvent", {
-	// 		templateUrl : "templates/addEventTemplate.html",
-	// 		controller: "addEventController",
-	// 		controllerAs: "addEventJS.js"
-	// 	});
-	// });
+<script>
+	function fullHeight() {
+		console.log("Set Height !");
+		$(".fullHeight").height(($(window).height() - 75));
+		$(".fullHeight .panel-footer").outerHeight($(".fullHeight").height() - $(".fullHeight .panel-heading").outerHeight() - $(".fullHeight .panel-body").outerHeight());
+	}
+	window.onresize = fullHeight;
+	$(document).ready(fullHeight());
 </script>
+
+
+<script src="js/indexJS.js"></script>
 <script src="js/mainJS.js"></script>
 <script src="js/loginJS.js"></script>
 <script src="js/registerJS.js"></script>
 <script src="js/addEventJS.js"></script>
-
+<script src="js/planningJS.js"></script>
 </html>

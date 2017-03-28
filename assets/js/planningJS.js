@@ -2,8 +2,12 @@
 
 
 
-angular.module("ae3").controller("mainController", function($scope, $http, $compile) {
+
+
+
+angular.module("ae3").controller("planningController", function($scope, $http, $compile) {
 	fullHeight();
+	$("#maxTen").hide();
 	$http({
 		url: "/api/event", 
 		method: "GET"
@@ -14,7 +18,47 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 		var content;
 		var compiledContent;
 		var infoWindow = [];
+
+		$scope.startDate = new Date();
+		$scope.endDate = new Date();
 		$scope.events = response.data.data;
+		$scope.checkedEvents = 0;
+		angular.forEach($scope.events, function(value, key) {
+			value.isChecked = false;
+			value.check = function() {
+				console.log("Event : " + this.nomEvent + " checks from " + $scope.checkedEvents);
+				if (this.isChecked) {
+					$scope.checkedEvents--;
+					this.isChecked = false;
+					$scope.endDate = new Date(new Date($scope.endDate).getTime() - new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
+				} else {
+					if ($scope.checkedEvents < 10) {
+						$scope.checkedEvents++;
+						this.isChecked = true;
+						// console.log("Scope End Date");
+						// console.log($scope.endDate);
+						// console.log(new Date($scope.endDate));
+						// console.log("End Date");
+						// console.log(this.dateFin);
+						// console.log(Date.parse(this.dateFin));
+						// console.log(new Date(Date.parse(this.dateFin)));
+						// console.log("Start Date");
+						// console.log(this.dateDebut);
+						// console.log(Date.parse(this.dateDebut));
+						// console.log(new Date(Date.parse(this.dateDebut)));
+						// console.log("Différence entre Début et Fin");
+						// console.log(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut)));
+						// console.log("Nouvelle date :");
+						// console.log(new Date(new Date($scope.endDate) + (new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut)))));
+						$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
+					} else {
+						console.log("Cannot Check !");
+						$("#maxTen").show('slow');
+					}
+				}
+				console.log("Event : " + this.nomEvent + " checks to " + $scope.checkedEvents);
+			};
+		});
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (p) {
 				var LatLng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
@@ -226,4 +270,8 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 		alert("Error loading events");
 	});
 
+	$scope.createPlanning = function(event) {
+		// console.log("Events :");
+		// console.log($scope.events);
+	};
 });

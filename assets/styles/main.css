@@ -2,3 +2,7 @@
   height: 800px; 
   border: 2px solid red;
 }
+
+.fullHeight .panel-footer {
+	overflow-y: auto;
+}
