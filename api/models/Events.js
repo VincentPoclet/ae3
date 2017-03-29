@@ -24,9 +24,8 @@ module.exports = {
 	  		model:'typeEvent' 
 	  	},
 	  	descEvent: {type:'string' },
-	 	longEvent: {type:'float' },
-	  	lattEvent: {type:'float' }
-	  	 	
+	 	longEvent: {type:'string' },
+	  	lattEvent: {type:'string' }
   	}
 };
 
