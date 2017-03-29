@@ -54,7 +54,7 @@ module.exports = {
 			longEvent: req.param('longEvent'),
 			lattEvent: req.param('lattEvent')
 		}).exec(function(err,row){
-				//console.log(req.param('longEvent'),req.param('lattEvent'));
+				console.log(req.param('longEvent'),req.param('lattEvent'));
 				if (err) {
 					return res.status(500).json({'err': err.message, 'data': row});
 				} 

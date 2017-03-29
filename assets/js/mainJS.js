@@ -3,7 +3,6 @@
 
 
 angular.module("ae3").controller("mainController", function($scope, $http, $compile) {
-	fullHeight();
 	$http({
 		url: "/api/event", 
 		method: "GET"
@@ -40,7 +39,6 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 					clearMarkers();
 
 					for (var i = 0; i < $scope.events.length; i++) {
-			
 						// Current object
 						var obj = $scope.events[i];
 						//console.log(obj);
@@ -54,9 +52,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							title: obj.nomEvent // this works, giving the marker a title with the correct title
 						});
 						//marker.addListener('click', toggleBounce);
-						var clicker = addClicker(marker, obj.title, location);
-						console.log($scope.events[i]);
-						
+						var clicker = addClicker(marker, obj.title, location);						
 					}
 				}
 
@@ -148,9 +144,9 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 						<label class='control-label'>Name</label>
 						<input ng-model='nomEvent' class='form-control' type='text' />
 						<label class='control-label'>Start Date</label>
-						<input ng-model='dateDebut' class='form-control' type='text' />
+						<input ng-model='dateDebut' class='form-control' type='datetime-local' />
 						<label class='control-label'>End Date</label>
-						<input ng-model='dateFin' class='form-control' type='text' />
+						<input ng-model='dateFin' class='form-control' type='datetime-local' />
 						<label class='control-label'>Event Type</label>
 						<select ng-model='typeEvent' class='form-control'>
 							<option value='0'>Museum</option>
@@ -255,15 +251,12 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							}if( $scope.infoWindow ) {
 		       					$scope.infoWindow.close();
 		   					}
-							// $scope.events.pop(response.data.data);
-							$scope.events = $scope.events.filter(function(el) {
-							    console.log(response.data.data.id);
-							    return el.id != response.data.data.id;
-
-							});
+		   					console.log($scope.events);
+							$scope.events.remove(response.data.data);
+							
 							afficherEvents();
 						}, function errorCallback(response) {
-							alert(response);
+							alert("This event is already removed. Please refresh the web page (F5).");
 					});
     			}
 			});
