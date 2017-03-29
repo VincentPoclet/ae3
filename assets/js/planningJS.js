@@ -21,6 +21,7 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 
 		$scope.startDate = new Date();
 		$scope.endDate = new Date();
+		$scope.oldDate = new Date();
 		$scope.events = response.data.data;
 		$scope.checkedEvents = 0;
 		angular.forEach($scope.events, function(value, key) {
@@ -273,5 +274,19 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 	$scope.createPlanning = function(event) {
 		// console.log("Events :");
 		// console.log($scope.events);
+		/* $scope.events.filter(function(element) {
+			return element.isChecked;
+		})*/
+	};
+
+	$scope.startChange = function() {
+		if (new Date(Date.parse($scope.startDate)) > new Date()) {
+			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+			$scope.oldDate = $scope.startDate;
+		} else {
+			$scope.startDate = new Date();
+			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+			$scope.oldDate = $scope.startDate;
+		}
 	};
 });

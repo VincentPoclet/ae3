@@ -11,7 +11,7 @@
 				</div>	
 			</div>
 			<label class="label-control">Start Date :</label>
-			<input type="text" class="form-control" ng-model="startDate" />
+			<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" />
 			<label class="label-control">End Date :</label>
 			<input type="text" class="form-control" ng-model="endDate" disabled />
 			<div class="btn-group btn-group-justified">
