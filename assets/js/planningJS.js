@@ -6,6 +6,7 @@
 
 
 angular.module("ae3").controller("planningController", function($scope, $http, $compile) {
+	var map;
 	fullHeight();
 	$("#maxTen").hide();
 	$http({
@@ -13,7 +14,6 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 		method: "GET"
 	}).then(function successCallback(response) {
 		// console.log(response);
-		var map;
 		var markersTemps = [];
 		var markers = [];
 		var content;
@@ -70,7 +70,7 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 							title: val.nomEvent // this works, giving the marker a title with the correct title
 						});
 						console.log(val.markers);
-						var clicker = addClicker(markers, obj.title, location);
+						var clicker = addClicker(markers, val.title, location);
 					});
 
 					// for (var i = 0; i < $scope.events.length; i++) {
@@ -293,6 +293,9 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 				};
 			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 		}
+	}, function errorCallback(response) {
+		alert("Error loading events");
+	});
 	
 
 				// ###################################################################################################
@@ -303,94 +306,35 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 
 
 
-		$scope.createPlanning = function() {
-			// console.log("Events :");
-			// console.log($scope.events);
-			var checked = $scope.events.filter(function(element) {
-				return element.isChecked;
-			});
-			console.log(checked);
+	$scope.createPlanning = function() {
+		// console.log("Events :");
+		// console.log($scope.events);
+		var checkedMarkers = $scope.events.filter(function(element) {
+			return element.isChecked;
+		}).map(function(el) {
+			return el.markers;
+		})
+		console.log(checkedMarkers);
 
-			// Instantiate a directions service.
-	  		var directionsService = new google.maps.DirectionsService;
+		// Instantiate a directions service.
+  		var directionsService = new google.maps.DirectionsService;
 
-			// Create a renderer for directions and bind it to the map.
-		  	var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+		// Create a renderer for directions and bind it to the map.
+	  	var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
 
-		  	// Instantiate an info window to hold step text.
-		  	var stepDisplay = new google.maps.InfoWindow;
+	  	// Instantiate an info window to hold step text.
+	  	var stepDisplay = new google.maps.InfoWindow;
 
-		 //  	// Display the route between the initial start and end selections.
-			// calculateAndDisplayRoute(
-			//   directionsDisplay, directionsService, markers, stepDisplay, map);
-			// // Listen to change events from the start and end lists.
-			// var onChangeHandler = function() {
-			// calculateAndDisplayRoute(
-			//     directionsDisplay, directionsService, markers, stepDisplay, map);
-			// };
-		};
+	};
 
-		// function calculateAndDisplayRoute(directionsDisplay, directionsService,
-		// 	markerArray, stepDisplay, map) {
-		//   	// First, remove any existing markers from the map.
-		//   	for (var i = 0; i < markerArray.length; i++) {
-		//   	  markerArray[i].setMap(null);
-		//  	 }
-
-		// 	  // Retrieve the start and end locations and create a DirectionsRequest using
-		// 	  // WALKING directions.
-		//   	directionsService.route({
-		// 	    origin: navigator.geolocation.getCurrentPosition(function (p) { return p.coords;})
-		//     	destination: navigator.geolocation.getCurrentPosition(function (p) { return p.coords;})
-		//     	travelMode: google.maps.TravelMode.WALKING
-		//   	}, function(response, status) {
-		// 	    // Route the directions and pass the response to a function to create
-		//     	// markers for each step.
-		//     	if (status === google.maps.DirectionsStatus.OK) {
-		//       	document.getElementById('warnings-panel').innerHTML =
-		// 	          '<b>' + response.routes[0].warnings + '</b>';
-		//       	directionsDisplay.setDirections(response);
-		//       	showSteps(response, checked, markers ,stepDisplay, map);
-		//     	} else {
-		//       	window.alert('Directions request failed due to ' + status);
-		//     	}
-		//   	});
-		// };
-
-		// function showSteps(directionResult, markerArray, stepDisplay, map) {
-		//   // For each step, place a marker, and add the text to the marker's infowindow.
-		//   // Also attach the marker to an array so we can keep track of it and remove it
-		//   // when calculating new routes.
-		//   var myRoute = directionResult.routes[0].legs[0];
-		//   for (var i = 0; i < myRoute.steps.length; i++) {
-		//     var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
-		//     marker.setMap(map);
-		//     marker.setPosition(myRoute.steps[i].start_location);
-		//     attachInstructionText(
-		//         stepDisplay, marker, myRoute.steps[i].instructions, map);
-		//   }
-		// }
-
-		// function attachInstructionText(stepDisplay, marker, text, map) {
-		//   google.maps.event.addListener(marker, 'click', function() {
-		//     // Open an info window when the marker is clicked on, containing the text
-		//     // of the step.
-		//     stepDisplay.setContent(text);
-		//     stepDisplay.open(map, marker);
-		//   });
-		// }
-
-		// $scope.startChange = function() {
-		// 	if (new Date(Date.parse($scope.startDate)) > new Date()) {
-		// 		$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
-		// 		$scope.oldDate = $scope.startDate;
-		// 	} else {
-		// 		$scope.startDate = new Date();
-		// 		$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
-		// 		$scope.oldDate = $scope.startDate;
-		// 	}
-		// };
-	}, function errorCallback(response) {
-		alert("Error loading events");
-	});
+	$scope.startChange = function() {
+		if (new Date(Date.parse($scope.startDate)) > new Date()) {
+			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+			$scope.oldDate = $scope.startDate;
+		} else {
+			$scope.startDate = new Date();
+			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+			$scope.oldDate = $scope.startDate;
+		}
+	};
 });
