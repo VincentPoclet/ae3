@@ -9,6 +9,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 	}).then(function successCallback(response) {
 		// console.log(response);
 		var map;
+		var markersTemps = [];
 		var markers = [];
 		var content;
 		var compiledContent;
@@ -36,12 +37,12 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 
 				function afficherEvents(){
 					//afficher tous les events
-					clearMarkers();
+					clearMarkers(markers);
 
 					for (var i = 0; i < $scope.events.length; i++) {
 						// Current object
 						var obj = $scope.events[i];
-						//console.log(obj);
+						console.log(obj);
 
 						var location = new google.maps.LatLng(obj.lattEvent,obj.longEvent);
 						// Adding a new marker for the object
@@ -59,7 +60,8 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 
 				// écoute les cliques de l'utilisateur pour créer un marker
 				google.maps.event.addListener(map, 'click', function(event) {
-					clearMarkers();
+					clearMarkers(markersTemps);
+					clearInfoWindow(infoWindow);
   					placeMarker(event.latLng);
 				});
 
@@ -73,13 +75,10 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 
 				// écoute les cliques de l'utilisateur sur les markers déjà présent, affiche le titre de l'événement
 				function addClicker(marker, content, location) {
-					clearMarkers();
 					infoWindow = new google.maps.InfoWindow({content : ''});
 					google.maps.event.addListener(marker, "click", function (e) {
-						clearMarkers();
-						if( $scope.infoWindow ) {
-           							$scope.infoWindow.close();
-       					}
+						clearMarkers(markersTemps);
+						clearInfoWindow(infoWindow);
 						infoWindow.setContent(marker.title);
 						infoWindow.open(map, marker);
 					});
@@ -91,13 +90,12 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 					<button ng-click='deleteButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Supprimer</button>
 					</div>`;
 					compiledContent = $compile(content)($scope);
+	                
                     infoWindow = new google.maps.InfoWindow({content : ''});
                     google.maps.event.addListener(marker, 'rightclick', (function(marker, content, scope) {
 	                    return function() {
-	                    	clearMarkers();
-	                    	if( infoWindow ) {
-           							infoWindow.close();
-       						}
+	                    	clearInfoWindow(infoWindow);
+	                    	clearMarkers(markersTemps);
 	                        infoWindow.setContent(content);
 	                        infoWindow.open(scope.map, marker);
 	                    };
@@ -111,70 +109,83 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				// ###################################################################################################
 
 				// Range tous les marqueurs dans un tableau
-				function setMapOnAll(map) {
+				function setMapOnAll(map,markers) {
 				  for (var i = 0; i < markers.length; i++) {
 				    markers[i].setMap(map);
 				  }
 				}
 
 				// Supprime tous les markers de la map 
-				function clearMarkers(){
-					setMapOnAll(null);
+				function clearMarkers(markers){
+					setMapOnAll(null,markers);
 					markers = [];
 				}
 
+
+				// Range tous les infoWindow dans un tableau
+				function setInfoWindowOnAll(map,infoWindow) {
+				  for (var i = 1; i < infoWindow.length; i++) {
+				    infoWindow[i].close();
+				    console.log('fermé');
+				  }
+				}
+
+
+				// Supprime tous les markers de la map 
+				function clearInfoWindow(infoWindow){
+					setInfoWindowOnAll(null,infoWindow);
+					infoWindow = [];
+				}
+
+
+
 				// Créer la marker sur la map
 				function placeMarker(location) {
-					clearMarkers();
-					if( infoWindow ) {
-   						//infoWindow.close();
-					}if( $scope.infoWindow ) {
-       					$scope.infoWindow.close();
-   					}
+
+					infoWindow.close();
+					clearMarkers(markersTemps);
+					
 				    var marker = new google.maps.Marker({
 				        position: location, 
 				        map: map,
 				        animation: google.maps.Animation.DROP
 					});
-					//marker.addListener('click', toggleBounce);
-					markers.push(marker);
+					markersTemps.push(marker);
+					infoWindow = new google.maps.InfoWindow({content : ''});
+                    infoWindow.setContent("Cliquer sur le marker pour créer un évenement");
+                    infoWindow.open(map, marker);
 					content = `
 					<div class='panel-body'>
 						<label class='control-label'>Créer votre évenement!</label><br>
 						<label class='control-label'>Name</label>
-						<input ng-model='nomEvent' class='form-control' type='text' />
+						<input ng-model='nomEvent' class='form-control' type='text' value='' ng-required="required"/>
 						<label class='control-label'>Start Date</label>
-						<input ng-model='dateDebut' class='form-control' type='datetime-local' />
+						<input ng-model='dateDebut' class='form-control' type='datetime-local' value='' ng-required="required"/>
 						<label class='control-label'>End Date</label>
-						<input ng-model='dateFin' class='form-control' type='datetime-local' />
+						<input ng-model='dateFin' class='form-control' type='datetime-local' value='' ng-required="required"/>
 						<label class='control-label'>Event Type</label>
-						<select ng-model='typeEvent' class='form-control'>
+						<select ng-model='typeEvent' class='form-control' value='' ng-required="required">
 							<option value='0'>Museum</option>
 							<option value='1'>Concert</option>
 							<option value='2'>Other</option>
 						</select>
 						<label class='control-label'>Description</label>
-						<textarea ng-model='descEvent' class='form-control'></textarea>
+						<textarea ng-model='descEvent' class='form-control' value=''></textarea>
 						<br>
 						<button ng-click='addEvent(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Submit</button>
                     </div>`;
 
                     compiledContent = $compile(content)($scope);
-					$scope.infoWindow = new google.maps.InfoWindow({content : ''});
+					
                     google.maps.event.addListener(marker, 'click', (function(marker, content, scope) {
 	                    return function() {
-	                    	if( $scope.infoWindow ) {
-           						$scope.infoWindow.close();
-       						}else if (infoWindow){
-       							infoWindow.close();
-       						}
-	                        scope.infoWindow.setContent(content);
-	                        scope.infoWindow.open(scope.map, marker);
+	                    	infoWindow.close();
+	                    	infoWindow = new google.maps.InfoWindow({content : ''});
+	                        infoWindow.setContent(content);
+	                        infoWindow.open(scope.map, marker);
 	                    };
                 	})(marker, compiledContent[0], $scope));		
 				}
-
-
 
 
 
@@ -188,7 +199,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				$scope.addEvent = function(longitude,lattitude) {
 					var newLongEvent = Number((longitude).toPrecision(6));
     				var newLattEvent = Number((lattitude).toPrecision(6));
-					
+					clearInfoWindow(infoWindow);
 					$http({
 						url: "/api/event", 
 						method: "POST",
@@ -205,8 +216,8 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							lattEvent: newLattEvent
 						}
 					}).then(function successCallback(response) {
-							$scope.infoWindow.close();
-							//$scope.infoWindow = "";
+							clearInfoWindow(infoWindow);
+							infoWindow.close();
 							$scope.events.push(response.data.data);
 							afficherEvents();
 						}, function errorCallback(response) {
@@ -223,11 +234,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							lattEvent: lattitude
 						}
 					}).then(function successCallback(response) {
-							if( infoWindow ) {
-		   						infoWindow.close();
-							}if( $scope.infoWindow ) {
-		       					$scope.infoWindow.close();
-		   					}
+							clearInfoWindow(infoWindow);
 							$scope.events.push(response.data.data);
 							afficherEvents();
 						}, function errorCallback(response) {
@@ -246,18 +253,14 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							lattEvent: newLattEvent
 						}
 					}).then(function successCallback(response) {
-							if( infoWindow ) {
-		   						infoWindow.close();
-							}if( $scope.infoWindow ) {
-		       					$scope.infoWindow.close();
-		   					}
-		   					console.log($scope.events);
-							$scope.events.remove(response.data.data);
+							clearInfoWindow(infoWindow);
+		   					//console.log($scope.events);
+							$scope.events.delete(response.data.data);
 							
 							afficherEvents();
 						}, function errorCallback(response) {
 							alert("This event is already removed. Please refresh the web page (F5).");
-					});
+						});
     			}
 			});
 		}else { // si la position n'est pas disponible on affiche paris 

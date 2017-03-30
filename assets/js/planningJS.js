@@ -14,6 +14,7 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 	}).then(function successCallback(response) {
 		// console.log(response);
 		var map;
+		var markersTemps = [];
 		var markers = [];
 		var content;
 		var compiledContent;
@@ -27,7 +28,6 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 		angular.forEach($scope.events, function(value, key) {
 			value.isChecked = false;
 			value.check = function() {
-				console.log("Event : " + this.nomEvent + " checks from " + $scope.checkedEvents);
 				if (this.isChecked) {
 					$scope.checkedEvents--;
 					this.isChecked = false;
@@ -36,28 +36,13 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 					if ($scope.checkedEvents < 10) {
 						$scope.checkedEvents++;
 						this.isChecked = true;
-						// console.log("Scope End Date");
-						// console.log($scope.endDate);
-						// console.log(new Date($scope.endDate));
-						// console.log("End Date");
-						// console.log(this.dateFin);
-						// console.log(Date.parse(this.dateFin));
-						// console.log(new Date(Date.parse(this.dateFin)));
-						// console.log("Start Date");
-						// console.log(this.dateDebut);
-						// console.log(Date.parse(this.dateDebut));
-						// console.log(new Date(Date.parse(this.dateDebut)));
-						// console.log("Différence entre Début et Fin");
-						// console.log(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut)));
-						// console.log("Nouvelle date :");
-						// console.log(new Date(new Date($scope.endDate) + (new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut)))));
+						
 						$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
 					} else {
 						console.log("Cannot Check !");
 						$("#maxTen").show('slow');
 					}
 				}
-				console.log("Event : " + this.nomEvent + " checks to " + $scope.checkedEvents);
 			};
 		});
 		if (navigator.geolocation) {
@@ -70,44 +55,55 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 				};
 				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 				
-				//afficher tous les events
-				for (var i = 0; i < $scope.events.length; i++) {
-		
-					// Current object
-					var obj = $scope.events[i];
-					console.log(obj);
+				afficherEvents();
+				function afficherEvents(){
+					//afficher tous les events
+					clearMarkers(markers);
 
 
-					var location = new google.maps.LatLng(obj.lattEvent,obj.longEvent);
-					// Adding a new marker for the object
-					var marker = new google.maps.Marker({
-						position: location,
-						map: map,
-						animation: google.maps.Animation.DROP,
-						title: obj.nomEvent // this works, giving the marker a title with the correct title
+					angular.forEach($scope.events, function(val,i){
+						var location = new google.maps.LatLng(val.lattEvent,val.longEvent);
+						val.markers=new google.maps.Marker({
+							position: location,
+							map: map,
+							animation: google.maps.Animation.DROP,
+							title: val.nomEvent // this works, giving the marker a title with the correct title
+						});
+						console.log(val.markers);
+						var clicker = addClicker(markers, obj.title, location);
 					});
-					//marker.addListener('click', toggleBounce);
-					var clicker = addClicker(marker, obj.title, location);
+
+					// for (var i = 0; i < $scope.events.length; i++) {
+					// 	// Current object
+					// 	var obj = $scope.events[i];
+
+					// 	var location = new google.maps.LatLng(obj.lattEvent,obj.longEvent);
+					// 	// Adding a new marker for the object
+					// 	markers = new google.maps.Marker({
+					// 		position: location,
+					// 		map: map,
+					// 		animation: google.maps.Animation.DROP,
+					// 		title: obj.nomEvent // this works, giving the marker a title with the correct title
+					// 	});
+
+					// 	var clicker = addClicker(markers, obj.title, location);	
+					// }
 					
 				}
 
-
-
 				// écoute les cliques de l'utilisateur pour créer un marker
 				google.maps.event.addListener(map, 'click', function(event) {
-					clearMarkers();
+					clearMarkers(markersTemps);
+					clearInfoWindow(infoWindow);
   					placeMarker(event.latLng);
 				});
 
 				// écoute les cliques de l'utilisateur sur les markers déjà présent, affiche le titre de l'événement
 				function addClicker(marker, content, location) {
-					clearMarkers();
 					infoWindow = new google.maps.InfoWindow({content : ''});
 					google.maps.event.addListener(marker, "click", function (e) {
-						clearMarkers();
-						if( $scope.infoWindow ) {
-           							$scope.infoWindow.close();
-       					}
+						clearMarkers(markersTemps);
+						clearInfoWindow(infoWindow);
 						infoWindow.setContent(marker.title);
 						infoWindow.open(map, marker);
 					});
@@ -119,51 +115,77 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 					<button ng-click='deleteButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Supprimer</button>
 					</div>`;
 					compiledContent = $compile(content)($scope);
-                    $scope.infoWindow = new google.maps.InfoWindow({content : ''});
+	                
+                    infoWindow = new google.maps.InfoWindow({content : ''});
                     google.maps.event.addListener(marker, 'rightclick', (function(marker, content, scope) {
 	                    return function() {
-	                    	clearMarkers();
-	                    	if( infoWindow ) {
-           							infoWindow.close();
-       						}
-	                        scope.infoWindow.setContent(content);
-	                        scope.infoWindow.open(scope.map, marker);
+	                    	clearInfoWindow(infoWindow);
+	                    	clearMarkers(markersTemps);
+	                        infoWindow.setContent(content);
+	                        infoWindow.open(scope.map, marker);
 	                    };
                 	})(marker, compiledContent[0], $scope));		
 				}
 
+
+				// ###################################################################################################
+				// ###################################################################################################
+				// ############################ gestion des markers sur la maps ######################################
+				// ###################################################################################################
+				// ###################################################################################################
+
+
 				// Range tous les marqueurs dans un tableau
-				function setMapOnAll(map) {
+				function setMapOnAll(map,markers) {
 				  for (var i = 0; i < markers.length; i++) {
 				    markers[i].setMap(map);
 				  }
 				}
 
 				// Supprime tous les markers de la map 
-				function clearMarkers(){
-					setMapOnAll(null);
+				function clearMarkers(markers){
+					setMapOnAll(null,markers);
 					markers = [];
+				}
+
+				// Range tous les infoWindow dans un tableau
+				function setInfoWindowOnAll(map,infoWindow) {
+				  for (var i = 1; i < infoWindow.length; i++) {
+				    infoWindow[i].close();
+				    console.log('fermé');
+				  }
+				}
+
+				// Supprime tous les markers de la map 
+				function clearInfoWindow(infoWindow){
+					setInfoWindowOnAll(null,infoWindow);
+					infoWindow = [];
 				}
 
 				// Créer la marker sur la map
 				function placeMarker(location) {
-					clearMarkers();
+
+					infoWindow.close();
+					clearMarkers(markersTemps);
+					
 				    var marker = new google.maps.Marker({
 				        position: location, 
 				        map: map,
 				        animation: google.maps.Animation.DROP
 					});
-					//marker.addListener('click', toggleBounce);
-					markers.push(marker);
+					markersTemps.push(marker);
+					infoWindow = new google.maps.InfoWindow({content : ''});
+                    infoWindow.setContent("Cliquer sur le marker pour créer un évenement");
+                    infoWindow.open(map, marker);
 					content = `
 					<div class='panel-body'>
 						<label class='control-label'>Créer votre évenement!</label><br>
 						<label class='control-label'>Name</label>
 						<input ng-model='nomEvent' class='form-control' type='text' />
 						<label class='control-label'>Start Date</label>
-						<input ng-model='dateDebut' class='form-control' type='text' />
+						<input ng-model='dateDebut' class='form-control' type='datetime-local' />
 						<label class='control-label'>End Date</label>
-						<input ng-model='dateFin' class='form-control' type='text' />
+						<input ng-model='dateFin' class='form-control' type='datetime-local' />
 						<label class='control-label'>Event Type</label>
 						<select ng-model='typeEvent' class='form-control'>
 							<option value='0'>Museum</option>
@@ -177,48 +199,54 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
                     </div>`;
 
                     compiledContent = $compile(content)($scope);
-					$scope.infoWindow = new google.maps.InfoWindow({content : ''});
+					
                     google.maps.event.addListener(marker, 'click', (function(marker, content, scope) {
 	                    return function() {
-	                    	if( $scope.infoWindow ) {
-           						$scope.infoWindow.close();
-       						}else if (infoWindow){
-       							infoWindow.close();
-       						}
-	                        scope.infoWindow.setContent(content);
-	                        scope.infoWindow.open(scope.map, marker);
+	                    	infoWindow.close();
+	                    	infoWindow = new google.maps.InfoWindow({content : ''});
+	                        infoWindow.setContent(content);
+	                        infoWindow.open(scope.map, marker);
 	                    };
                 	})(marker, compiledContent[0], $scope));		
 				}
 
+
+				// ###################################################################################################
+				// ###################################################################################################
+				// ##################################### gestion des évenements ######################################
+				// ###################################################################################################
+				// ###################################################################################################
+
 				$scope.addEvent = function(longitude,lattitude) {
-					// alert("clicked");
-					// console.log("totototototto");
-    					$http({
-							url: "/api/event", 
-							method: "POST",
-							data: {
-								nomEvent: $scope.nomEvent,
-								adresse: "toto",
-								codePostal: "1234",
-								ville: "toto",
-								dateDebut: $scope.dateDebut,
-								dateFin: $scope.dateFin,
-								typeEvent: $scope.typeEvent,
-								descEvent: $scope.descEvent,
-								longEvent: longitude,
-								lattEvent: lattitude
-							}
-						}).then(function successCallback(response) {
-								$location.url("/");
-							}, function errorCallback(response) {
-								alert(response);
-						});
+					var newLongEvent = Number((longitude).toPrecision(6));
+    				var newLattEvent = Number((lattitude).toPrecision(6));
+					
+					$http({
+						url: "/api/event", 
+						method: "POST",
+						data: {
+							nomEvent: $scope.nomEvent,
+							adresse: "toto",
+							codePostal: "1234",
+							ville: "toto",
+							dateDebut: $scope.dateDebut,
+							dateFin: $scope.dateFin,
+							typeEvent: $scope.typeEvent,
+							descEvent: $scope.descEvent,
+							longEvent: newLongEvent,
+							lattEvent: newLattEvent
+						}
+					}).then(function successCallback(response) {
+							clearInfoWindow(infoWindow);
+							infoWindow.close();
+							$scope.events.push(response.data.data);
+							afficherEvents();
+						}, function errorCallback(response) {
+							alert(response);
+					});
 				}
 
 				$scope.modifyButton = function(longitude,lattitudelongitude,lattitude){
-					alert("clicked");
-					console.log("totototototto");
 					$http({
 						url: "/api/event", 
 						method: "PUT",
@@ -227,35 +255,33 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 							lattEvent: lattitude
 						}
 					}).then(function successCallback(response) {
-							$location.url("/");
+							clearInfoWindow(infoWindow);
+							$scope.events.push(response.data.data);
+							afficherEvents();
 						}, function errorCallback(response) {
 							alert(response);
 					});
 				}
     			
-    			$scope.deleteButton = function(longitude,lattitude){
-    				alert("clicked");
-					console.log("totototototto");
+    			$scope.deleteButton = function(longEvent,lattEvent){
+    				var newLongEvent = Number((longEvent).toPrecision(6));
+    				var newLattEvent = Number((lattEvent).toPrecision(6));
     				$http({
 						url: "/api/event", 
 						method: "DELETE",
 						data: {
-							nomEvent: $scope.nomEvent,
-							adresse: $scope.adresse,
-							codePostal: $scope.codePostal,
-							ville: $scope.ville,
-							dateDebut: $scope.dateDebut,
-							dateFin: $scope.dateFin,
-							typeEvent: $scope.typeEvent,
-							descEvent: $scope.descEvent,
-							longEvent: longitude,
-							lattEvent: lattitude
+							longEvent: newLongEvent,
+							lattEvent: newLattEvent
 						}
 					}).then(function successCallback(response) {
-							$location.url("/");
+							clearInfoWindow(infoWindow);
+		   					//console.log($scope.events);
+							$scope.events.remove(response.data.data);
+							
+							afficherEvents();
 						}, function errorCallback(response) {
-							alert(response);
-					});
+							alert("This event is already removed. Please refresh the web page (F5).");
+						});
     			}
 			});
 		}else { // si la position n'est pas disponible on affiche paris 
@@ -267,26 +293,104 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 				};
 			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 		}
+	
+
+				// ###################################################################################################
+				// ###################################################################################################
+				// ##################################### gestion des plannings  ######################################
+				// ###################################################################################################
+				// ###################################################################################################
+
+
+
+		$scope.createPlanning = function() {
+			// console.log("Events :");
+			// console.log($scope.events);
+			var checked = $scope.events.filter(function(element) {
+				return element.isChecked;
+			});
+			console.log(checked);
+
+			// Instantiate a directions service.
+	  		var directionsService = new google.maps.DirectionsService;
+
+			// Create a renderer for directions and bind it to the map.
+		  	var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+
+		  	// Instantiate an info window to hold step text.
+		  	var stepDisplay = new google.maps.InfoWindow;
+
+		 //  	// Display the route between the initial start and end selections.
+			// calculateAndDisplayRoute(
+			//   directionsDisplay, directionsService, markers, stepDisplay, map);
+			// // Listen to change events from the start and end lists.
+			// var onChangeHandler = function() {
+			// calculateAndDisplayRoute(
+			//     directionsDisplay, directionsService, markers, stepDisplay, map);
+			// };
+		};
+
+		// function calculateAndDisplayRoute(directionsDisplay, directionsService,
+		// 	markerArray, stepDisplay, map) {
+		//   	// First, remove any existing markers from the map.
+		//   	for (var i = 0; i < markerArray.length; i++) {
+		//   	  markerArray[i].setMap(null);
+		//  	 }
+
+		// 	  // Retrieve the start and end locations and create a DirectionsRequest using
+		// 	  // WALKING directions.
+		//   	directionsService.route({
+		// 	    origin: navigator.geolocation.getCurrentPosition(function (p) { return p.coords;})
+		//     	destination: navigator.geolocation.getCurrentPosition(function (p) { return p.coords;})
+		//     	travelMode: google.maps.TravelMode.WALKING
+		//   	}, function(response, status) {
+		// 	    // Route the directions and pass the response to a function to create
+		//     	// markers for each step.
+		//     	if (status === google.maps.DirectionsStatus.OK) {
+		//       	document.getElementById('warnings-panel').innerHTML =
+		// 	          '<b>' + response.routes[0].warnings + '</b>';
+		//       	directionsDisplay.setDirections(response);
+		//       	showSteps(response, checked, markers ,stepDisplay, map);
+		//     	} else {
+		//       	window.alert('Directions request failed due to ' + status);
+		//     	}
+		//   	});
+		// };
+
+		// function showSteps(directionResult, markerArray, stepDisplay, map) {
+		//   // For each step, place a marker, and add the text to the marker's infowindow.
+		//   // Also attach the marker to an array so we can keep track of it and remove it
+		//   // when calculating new routes.
+		//   var myRoute = directionResult.routes[0].legs[0];
+		//   for (var i = 0; i < myRoute.steps.length; i++) {
+		//     var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
+		//     marker.setMap(map);
+		//     marker.setPosition(myRoute.steps[i].start_location);
+		//     attachInstructionText(
+		//         stepDisplay, marker, myRoute.steps[i].instructions, map);
+		//   }
+		// }
+
+		// function attachInstructionText(stepDisplay, marker, text, map) {
+		//   google.maps.event.addListener(marker, 'click', function() {
+		//     // Open an info window when the marker is clicked on, containing the text
+		//     // of the step.
+		//     stepDisplay.setContent(text);
+		//     stepDisplay.open(map, marker);
+		//   });
+		// }
+
+		// $scope.startChange = function() {
+		// 	if (new Date(Date.parse($scope.startDate)) > new Date()) {
+		// 		$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+		// 		$scope.oldDate = $scope.startDate;
+		// 	} else {
+		// 		$scope.startDate = new Date();
+		// 		$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+		// 		$scope.oldDate = $scope.startDate;
+		// 	}
+		// };
 	}, function errorCallback(response) {
 		alert("Error loading events");
 	});
-
-	$scope.createPlanning = function(event) {
-		// console.log("Events :");
-		// console.log($scope.events);
-		/* $scope.events.filter(function(element) {
-			return element.isChecked;
-		})*/
-	};
-
-	$scope.startChange = function() {
-		if (new Date(Date.parse($scope.startDate)) > new Date()) {
-			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
-			$scope.oldDate = $scope.startDate;
-		} else {
-			$scope.startDate = new Date();
-			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
-			$scope.oldDate = $scope.startDate;
-		}
-	};
 });
