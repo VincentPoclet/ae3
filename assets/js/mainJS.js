@@ -8,6 +8,11 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 		method: "GET"
 	}).then(function successCallback(response) {
 		// console.log(response);
+		/*
+			à changer :
+				-> Stocker le marqueur d'un événement DANS cet événement
+				Ansi, $scope.events[0].marker contiendra le marqueur de l'événement 0.
+		*/
 		var map;
 		var markers = [];
 		var content;
@@ -251,8 +256,18 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							}if( $scope.infoWindow ) {
 		       					$scope.infoWindow.close();
 		   					}
-		   					console.log($scope.events);
-							$scope.events.remove(response.data.data);
+		   					// console.log($scope.events);
+		   					$scope.events = $scope.events.filter(function(el) {
+		   						var bool = true;
+								angular.forEach(response.data.data, function(value, key) {
+									bool = ((el.id != value.id) && bool);
+									// console.log("Comparing " + el.id + " to " + value.id);
+								});
+		   						return bool;
+		   					});
+		   					// console.log($scope.events);
+		   					// console.log(response.data.data.id);
+							// $scope.events.remove(response.data.data);
 							
 							afficherEvents();
 						}, function errorCallback(response) {
