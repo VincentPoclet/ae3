@@ -42,7 +42,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 					for (var i = 0; i < $scope.events.length; i++) {
 						// Current object
 						var obj = $scope.events[i];
-						console.log(obj);
+						//console.log(obj);
 
 						var location = new google.maps.LatLng(obj.lattEvent,obj.longEvent);
 						// Adding a new marker for the object

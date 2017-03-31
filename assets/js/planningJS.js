@@ -7,6 +7,9 @@
 
 angular.module("ae3").controller("planningController", function($scope, $http, $compile) {
 	var map;
+	var directionsDisplay;
+	var directionsService = new google.maps.DirectionsService();
+	var markers = [];
 	fullHeight();
 	$("#maxTen").hide();
 	$http({
@@ -15,7 +18,6 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 	}).then(function successCallback(response) {
 		// console.log(response);
 		var markersTemps = [];
-		var markers = [];
 		var content;
 		var compiledContent;
 		var infoWindow = [];
@@ -56,6 +58,11 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 				
 				afficherEvents();
+				
+
+
+
+
 				function afficherEvents(){
 					//afficher tous les events
 					clearMarkers(markers);
@@ -69,7 +76,6 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 							animation: google.maps.Animation.DROP,
 							title: val.nomEvent // this works, giving the marker a title with the correct title
 						});
-						console.log(val.markers);
 						var clicker = addClicker(markers, val.title, location);
 					});
 
@@ -298,34 +304,75 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 	});
 	
 
-				// ###################################################################################################
-				// ###################################################################################################
-				// ##################################### gestion des plannings  ######################################
-				// ###################################################################################################
-				// ###################################################################################################
-
-
+		// ###################################################################################################
+		// ###################################################################################################
+		// ##################################### gestion des plannings  ######################################
+		// ###################################################################################################
+		// ###################################################################################################
 
 	$scope.createPlanning = function() {
 		// console.log("Events :");
 		// console.log($scope.events);
 		var checkedMarkers = $scope.events.filter(function(element) {
 			return element.isChecked;
-		}).map(function(el) {
-			return el.markers;
 		})
+		// .map(function(el) {
+		// 	return el.markers;
+		// })
 		console.log(checkedMarkers);
+		angular.forEach($scope.events, function(val,i){
+			val.markers.setMap(null);
+		});
 
-		// Instantiate a directions service.
-  		var directionsService = new google.maps.DirectionsService;
+		markers.length = 0;
+		initializeRoute(checkedMarkers);
+		google.maps.event.addDomListener(window, "load", initializeRoute);
+	   
+	}
 
-		// Create a renderer for directions and bind it to the map.
-	  	var directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+	function initializeRoute(checkedMarkers){
+		directionsDisplay = new google.maps.DirectionsRenderer();
 
-	  	// Instantiate an info window to hold step text.
-	  	var stepDisplay = new google.maps.InfoWindow;
+	  	directionsDisplay.setMap(map);
+	  	var infowindow = new google.maps.InfoWindow();
 
-	};
+	  	var marker, i;
+	  	var request = {
+	  	  travelMode: google.maps.TravelMode.WALKING
+	  	};
+
+	  	angular.forEach(checkedMarkers, function(val,i){
+	  		marker = new google.maps.Marker({
+	      		position: new google.maps.LatLng(val.lattEvent, val.longEvent),
+	    	});
+
+	  		google.maps.event.addListener(marker, 'click', (function(marker, i) {
+	      	return function() {
+		        infowindow.setContent(val.name);
+	        	infowindow.open(map, marker);
+	      	}
+	    	})(marker, i));
+
+	  		if (i == 0) request.origin = marker.getPosition();
+	    	else if (i == checkedMarkers.length - 1) request.destination = marker.getPosition();
+	    	else {
+		      	if (!request.waypoints) request.waypoints = [];
+		      	request.waypoints.push({
+			        location: marker.getPosition(),
+		        	stopover: true
+			     });
+	    	}
+		});
+
+	directionsService.route(request, function(result, status) {
+	    if (status == google.maps.DirectionsStatus.OK) {
+	      directionsDisplay.setDirections(result);
+	    }
+ 	});
+}
+
+
+
 
 	$scope.startChange = function() {
 		if (new Date(Date.parse($scope.startDate)) > new Date()) {
@@ -337,4 +384,7 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 			$scope.oldDate = $scope.startDate;
 		}
 	};
+
+	
+
 });
