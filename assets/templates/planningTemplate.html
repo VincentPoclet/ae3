@@ -3,47 +3,124 @@
 		<div class="panel-heading">
 			<h5 class="panel-title">Événements près de chez vous</h5>
 		</div>
-		<div class="panel-body">
-			<div class="form-inline">
-				<div class="input-group col-md-offset-6">
-					<input type="text" class="form-control" placeholder="search..." />
-					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-				</div>	
-			</div>
-			<label class="label-control">Start Date :</label>
-			<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" />
-			<label class="label-control">End Date :</label>
-			<input type="text" class="form-control" ng-model="endDate" disabled />
-			<div class="btn-group btn-group-justified">
-				<div class="btn-group">
-					<button ng-click="createPlanning()" role="button" class="btn btn-primary">Create</button>
+		<div ng-switch="planningPhase">
+			<div ng-switch-when="1">
+				<div class="panel-body">
+					<div class="form-inline">
+						<div class="input-group col-md-offset-6">
+							<input type="text" class="form-control" placeholder="search..." />
+							<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+						</div>	
+					</div>
+					<label class="label-control">Start Date :</label>
+					<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" />
+					<label class="label-control">End Date :</label>
+					<input type="text" class="form-control" ng-model="endDate" disabled />
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button ng-click="createPlanning()" role="button" class="btn btn-primary">Create</button>
+						</div>
+						<div class="btn-group">
+							<a href="#!/planning/" role="button" class="btn btn-danger">Erase All</a>
+						</div>
+					</div>
 				</div>
-				<div class="btn-group">
-					<a href="#!/planning/" role="button" class="btn btn-danger">Erase All</a>
+				<div class="panel-footer">
+					<p>Please select events you're interested in.</p>
+					<p id="maxTen" class="text-muted text-danger"><span class="glyphicon glyphicon-alert"></span>&nbsp; You cannot select more than 10 events.</p>
+					<table id="eventsPlanning" class="table table-condensed table-striped">
+						<thead>
+							<th class="col-xs-1"></th>
+					        <th>Nom Event</th>
+					        <th>Ville</th>
+					        <th>Date de début</th>
+		      			</thead>
+		      			<tbody>
+		      				<tr ng-repeat="x in events" ng-click="x.check();">
+				          		<td><input ng-model="x.isChecked" type="checkbox" ng-change="x.isChecked=!x.isChecked" /></td>
+				          		<td>{{x.nomEvent}}</td>
+				          		<td>{{x.ville}}</td>
+				          		<td>{{x.dateDebut | date:'dd/MM/yy HH:mm'}} </td>
+		      				</tr>
+		      			</tbody>
+						<tfoot>
+						</tfoot>
+					</table>
 				</div>
 			</div>
-		</div>
-		<div class="panel-footer">
-			<p>Please select events you're interested in.</p>
-			<p id="maxTen" class="text-muted text-danger"><span class="glyphicon glyphicon-alert"></span>&nbsp; You cannot select more than 10 events.</p>
-			<table id="eventsPlanning" class="table table-condensed table-striped">
-				<thead>
-					<th class="col-xs-1"></th>
-			        <th>Nom Event</th>
-			        <th>Ville</th>
-			        <th>Date de début</th>
-      			</thead>
-      			<tbody>
-      				<tr ng-repeat="x in events" ng-click="x.check();">
-		          		<td><input ng-model="x.isChecked" type="checkbox" ng-change="x.isChecked=!x.isChecked" /></td>
-		          		<td>{{x.nomEvent}}</td>
-		          		<td>{{x.ville}}</td>
-		          		<td>{{x.dateDebut | date:'dd/MM/yy HH:mm'}} </td>
-      				</tr>
-      			</tbody>
-				<tfoot>
-				</tfoot>
-			</table>
+			<div ng-switch-when="2">
+				<div class="panel-body">
+					<label class="label-control">Start Date :</label>
+					<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" disabled />
+					<label class="label-control">End Date :</label>
+					<input type="text" class="form-control" ng-model="endDate" disabled />
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button ng-click="renderPlanning()" role="button" class="btn btn-primary">Render</button>
+						</div>
+						<div class="btn-group">
+							<button ng-click="validPlanning()" role="button" class="btn btn-success">Validate</button>
+						</div>
+						<div class="btn-group">
+							<a href="#!/planning/" role="button" class="btn btn-danger">Erase All</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<table id="eventsPlanning_v2" class="table table-condensed table-striped">
+						<thead>
+					        <th class="col-xs-3">Nom Event</th>
+					        <th class="col-xs-4">Date de début</th>
+					        <th class="col-xs-4">Durée prévue</th>
+					        <th class="col-xs-1"></th>
+		      			</thead>
+		      			<tbody id="bodyPlanning2">
+		      				<tr ng-repeat="x in checkedEvents">
+				          		<td>{{x.nomEvent}}</td>
+				          		<td>{{x.dateDebut | date:'dd/MM/yy HH:mm'}} </td>
+				          		<td><input ng-model="x.durationPlanned" type="text" class="form-control" placeholder="Durée..." /></td>
+				          		<td>
+				          			<div class="col-xs-12">
+				          				<button ng-click="moveUp(x)" class="btn btn-default">
+				          					<span class="glyphicon glyphicon-menu-up"></span>
+				          				</button>
+				          			</div>
+				          			<div class="col-xs-12">
+				          				<button ng-click="moveDown(x)" class="btn btn-default">
+				          					<span class="glyphicon glyphicon-menu-down"></span>
+				          				</button>
+				          			</div>
+				          		</td>
+		      				</tr>
+		      			</tbody>
+						<tfoot>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<div ng-switch-when="3">
+				<div class="panel-body">
+					<label class="label-control">Start Date :</label>
+					<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" disabled />
+					<label class="label-control">End Date :</label>
+					<input type="text" class="form-control" ng-model="endDate" disabled />
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button ng-click="savePlanning()" role="button" class="btn btn-success">Save</button>
+						</div>
+						<div class="btn-group">
+							<a href="#!/planning/" role="button" class="btn btn-danger">Erase All</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<p>Just a few more steps</p>
+					<label class="control-label">Planning Name</label>
+					<input ng-model="planName" type="text" class="form-control" placeholder="Name your planning !" />
+					<label class="control-label">Planning Description</label>
+					<textarea ng-model="planDescr" class="form-control" placeholder="Enter a short description for your planning here :)"></textarea>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

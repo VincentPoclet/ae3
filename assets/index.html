@@ -76,8 +76,11 @@
 <script>
 	function fullHeight() {
 		console.log("Set Height !");
-		$(".fullHeight").height(($(window).height() - 75));
-		$(".fullHeight .panel-footer").outerHeight($(".fullHeight").height() - $(".fullHeight .panel-heading").outerHeight() - $(".fullHeight .panel-body").outerHeight());
+		// $(".fullHeight").height(($(window).height() - 75));
+		$(".fullHeight").css('max-height', ($(window).height() - 75));
+
+		$(".fullHeight").find(".panel-footer").css('max-height', $(".fullHeight").height() - $(".fullHeight .panel-heading").outerHeight() - $(".fullHeight .panel-body").outerHeight());
+		// $(".fullHeight").find(".panel-footer").outerHeight($(".fullHeight").height() - $(".fullHeight .panel-heading").outerHeight() - $(".fullHeight .panel-body").outerHeight());
 	}
 	window.onresize = fullHeight;
 	$(document).ready(fullHeight());

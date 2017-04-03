@@ -1,8 +1,12 @@
 #map-canvas { 
-  height: 800px; 
-  border: 2px solid red;
+	height: 800px; 
+	border: 2px solid red;
 }
 
 .fullHeight .panel-footer {
 	overflow-y: auto;
+}
+
+#bodyPlanning2 > tr > td {
+     vertical-align: middle;
 }

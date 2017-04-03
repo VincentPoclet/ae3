@@ -31,7 +31,7 @@ app.config(function($routeProvider) {
 });
 
 
-app.controller("indexController", function($scope, $http, $location) {
+app.controller("indexController", function($scope, $rootScope, $http, $location) {
 	$scope.$on('$locationChangeStart', function(event) {
 		$scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
 		// $scope.includeMap = true;
@@ -47,6 +47,7 @@ app.controller("indexController", function($scope, $http, $location) {
 					$scope.nomUser = "";
 					$scope.prenomUser = "";
 				} else {
+					$rootScope.session = response.data.res;
 					$scope.session = true;
 					$scope.id = response.data.res.id;
 					$scope.nomUser = response.data.res.nom;
@@ -68,6 +69,7 @@ app.controller("indexController", function($scope, $http, $location) {
 			url: "/api/session",
 			method: "DELETE"
 		}).then(function successCallback(response) {
+			$rootScope.session = "";
 			$scope.session = false;
 			$scope.id = "";
 			$scope.nomUser = "";

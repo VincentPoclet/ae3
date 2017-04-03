@@ -1,17 +1,16 @@
 'use strict';
 
 
-
-
-
-
-angular.module("ae3").controller("planningController", function($scope, $http, $compile) {
+angular.module("ae3").controller("planningController", function($scope, $rootScope, $http, $compile, $timeout) {
 	var map;
+	var route;
 	var directionsDisplay;
 	var directionsService = new google.maps.DirectionsService();
 	var markers = [];
-	fullHeight();
-	$("#maxTen").hide();
+
+	$scope.planName = "";
+	$scope.planDescr = "";
+	$scope.planningPhase = 1;
 	$http({
 		url: "/api/event", 
 		method: "GET"
@@ -315,7 +314,7 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 		// console.log($scope.events);
 		var checkedMarkers = $scope.events.filter(function(element) {
 			return element.isChecked;
-		})
+		});
 		// .map(function(el) {
 		// 	return el.markers;
 		// })
@@ -327,12 +326,23 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 		markers.length = 0;
 		initializeRoute(checkedMarkers);
 		google.maps.event.addDomListener(window, "load", initializeRoute);
-	   
+
+		$scope.checkedEvents = checkedMarkers;
+		angular.forEach($scope.checkedEvents, function(val, i) {
+			val.order = i;
+		});
+		$scope.planningPhase = 2;
+		$timeout(function() {
+			fullHeight();
+		});
 	}
 
 	function initializeRoute(checkedMarkers){
+	    if (directionsDisplay != null) { 
+   			directionsDisplay.setMap(null);
+   			directionsDisplay = null; 
+   		}
 		directionsDisplay = new google.maps.DirectionsRenderer();
-
 	  	directionsDisplay.setMap(map);
 	  	var infowindow = new google.maps.InfoWindow();
 
@@ -366,7 +376,7 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 
 	directionsService.route(request, function(result, status) {
 	    if (status == google.maps.DirectionsStatus.OK) {
-	      directionsDisplay.setDirections(result);
+	     	directionsDisplay.setDirections(result);
 	    }
  	});
 }
@@ -385,6 +395,68 @@ angular.module("ae3").controller("planningController", function($scope, $http, $
 		}
 	};
 
-	
+	$scope.moveUp = function(elem) {
+		var pos = $scope.checkedEvents.indexOf(elem);
+		if (pos == 0) {
+			return false;
+		}
+		var tmp = $scope.checkedEvents[pos-1];
+		$scope.checkedEvents[pos-1] = elem;
+		$scope.checkedEvents[pos] = tmp;
+		$scope.checkedEvents[pos-1].order = pos - 1;
+		$scope.checkedEvents[pos].order = pos;
+		console.log($scope.checkedEvents);
+		return true;
+	};
+
+	$scope.moveDown = function(elem) {
+		var pos = $scope.checkedEvents.indexOf(elem);
+		if (pos == ($scope.checkedEvents.length - 1)) {
+			return false;
+		}
+		var tmp = $scope.checkedEvents[pos+1];
+		$scope.checkedEvents[pos+1] = elem;
+		$scope.checkedEvents[pos] = tmp;
+		$scope.checkedEvents[pos+1].order = pos + 1;
+		$scope.checkedEvents[pos].order = pos;
+		console.log($scope.checkedEvents);
+		return true;
+	};
+
+	$scope.renderPlanning = function() {
+		initializeRoute($scope.checkedEvents);
+	};
+
+	$scope.validPlanning = function() {
+		$scope.renderPlanning();
+		$scope.planningPhase = 3;
+	};
+
+	$scope.savePlanning = function() {
+		var post = new Object();
+		post.name = $scope.planName;
+		post.startDate = $scope.startDate;
+		post.description = $scope.planDescr;
+		if ($rootScope.session != null) {
+			post.userID = $rootScope.session.id;
+		} else {
+			alert("Please connect.");
+			return false;
+		}
+		post.checkedEvents = [];
+		angular.forEach($scope.checkedEvents, function(el) {
+			post.checkedEvents.push({
+				eventID: el.id,
+				duration: el.durationPlanned,
+				order: el.order
+			});
+		});
+		console.log(post);
+	}
+
+	$timeout(function() {
+		$("#maxTen").hide();
+		fullHeight();
+	});
 
 });
