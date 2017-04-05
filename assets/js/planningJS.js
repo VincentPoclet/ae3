@@ -57,10 +57,6 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 				
 				afficherEvents();
-				
-
-
-
 
 				function afficherEvents(){
 					//afficher tous les events
@@ -76,25 +72,10 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 							title: val.nomEvent // this works, giving the marker a title with the correct title
 						});
 						var clicker = addClicker(markers, val.title, location);
-					});
-
-					// for (var i = 0; i < $scope.events.length; i++) {
-					// 	// Current object
-					// 	var obj = $scope.events[i];
-
-					// 	var location = new google.maps.LatLng(obj.lattEvent,obj.longEvent);
-					// 	// Adding a new marker for the object
-					// 	markers = new google.maps.Marker({
-					// 		position: location,
-					// 		map: map,
-					// 		animation: google.maps.Animation.DROP,
-					// 		title: obj.nomEvent // this works, giving the marker a title with the correct title
-					// 	});
-
-					// 	var clicker = addClicker(markers, obj.title, location);	
-					// }
-					
+					});					
 				}
+
+
 
 				// écoute les cliques de l'utilisateur pour créer un marker
 				google.maps.event.addListener(map, 'click', function(event) {
