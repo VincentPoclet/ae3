@@ -13,9 +13,9 @@
 						</div>	
 					</div>
 					<label class="label-control">Start Date :</label>
-					<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" />
+					<input ng-blur="startChange();" type="text" class="form-control" ng-model="bornes.startDate" />
 					<label class="label-control">End Date :</label>
-					<input type="text" class="form-control" ng-model="endDate" disabled />
+					<input type="text" class="form-control" ng-model="bornes.endDate" disabled />
 					<div class="btn-group btn-group-justified">
 						<div class="btn-group">
 							<button ng-click="createPlanning()" role="button" class="btn btn-primary">Create</button>
@@ -51,9 +51,9 @@
 			<div ng-switch-when="2">
 				<div class="panel-body">
 					<label class="label-control">Start Date :</label>
-					<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" disabled />
+					<input ng-blur="startChange();" type="text" class="form-control" ng-model="bornes.startDate" disabled />
 					<label class="label-control">End Date :</label>
-					<input type="text" class="form-control" ng-model="endDate" disabled />
+					<input type="text" class="form-control" ng-model="bornes.endDate" disabled />
 					<div class="btn-group btn-group-justified">
 						<div class="btn-group">
 							<button ng-click="renderPlanning()" role="button" class="btn btn-primary">Render</button>
@@ -101,9 +101,9 @@
 			<div ng-switch-when="3">
 				<div class="panel-body">
 					<label class="label-control">Start Date :</label>
-					<input ng-blur="startChange()" type="text" class="form-control" ng-model="startDate" disabled />
+					<input ng-blur="startChange()" type="text" class="form-control" ng-model="bornes.startDate" disabled />
 					<label class="label-control">End Date :</label>
-					<input type="text" class="form-control" ng-model="endDate" disabled />
+					<input type="text" class="form-control" ng-model="bornes.endDate" disabled />
 					<div class="btn-group btn-group-justified">
 						<div class="btn-group">
 							<button ng-click="savePlanning()" role="button" class="btn btn-success">Save</button>

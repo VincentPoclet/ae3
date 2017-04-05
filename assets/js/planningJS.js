@@ -20,9 +20,9 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 		var content;
 		var compiledContent;
 		var infoWindow = [];
-
-		$scope.startDate = new Date();
-		$scope.endDate = new Date();
+		$scope.bornes = {};
+		$scope.bornes.startDate = new Date();
+		$scope.bornes.endDate = new Date();
 		$scope.oldDate = new Date();
 		$scope.events = response.data.data;
 		$scope.checkedEvents = 0;
@@ -32,13 +32,13 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 				if (this.isChecked) {
 					$scope.checkedEvents--;
 					this.isChecked = false;
-					$scope.endDate = new Date(new Date($scope.endDate).getTime() - new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
+					$scope.bornes.endDate = new Date(new Date($scope.bornes.endDate).getTime() - new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
 				} else {
 					if ($scope.checkedEvents < 10) {
 						$scope.checkedEvents++;
 						this.isChecked = true;
 						
-						$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
+						$scope.bornes.endDate = new Date(new Date($scope.bornes.endDate).getTime() + new Date(new Date(Date.parse(this.dateFin)) - new Date(Date.parse(this.dateDebut))).getTime());
 					} else {
 						console.log("Cannot Check !");
 						$("#maxTen").show('slow');
@@ -367,13 +367,31 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 
 
 	$scope.startChange = function() {
-		if (new Date(Date.parse($scope.startDate)) > new Date()) {
-			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
-			$scope.oldDate = $scope.startDate;
+		// var stdt;
+		// try {
+		// 	stdt = new Date($scope.bornes.startDate);
+		// 	console.log(stdt);
+		// 	console.log($scope.bornes.startDate);
+		// 	if (stdt > new Date()) {
+		// 		$scope.bornes.endDate = new Date(new Date($scope.bornes.endDate).getTime() + new Date(new Date(Date.parse($scope.bornes.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+		// 		console.log($scope.bornes.endDate);
+		// 		$scope.oldDate = $scope.bornes.startDate;
+		// 	} else {
+		// 		$scope.bornes.startDate = new Date();
+		// 		$scope.bornes.endDate = new Date(new Date($scope.bornes.endDate).getTime() + new Date(new Date(Date.parse($scope.bornes.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+		// 		console.log($scope.bornes.endDate);
+		// 		$scope.oldDate = $scope.bornes.startDate;
+		// 	}
+		// } catch (e) {
+		// 	console.log(e);
+		// }
+		if (new Date(Date.parse($scope.bornes.startDate)) > new Date()) {
+			$scope.bornes.endDate = new Date(new Date($scope.bornes.endDate).getTime() + new Date(new Date(Date.parse($scope.bornes.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+			$scope.oldDate = $scope.bornes.startDate;
 		} else {
-			$scope.startDate = new Date();
-			$scope.endDate = new Date(new Date($scope.endDate).getTime() + new Date(new Date(Date.parse($scope.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
-			$scope.oldDate = $scope.startDate;
+			$scope.bornes.startDate = new Date();
+			$scope.bornes.endDate = new Date(new Date($scope.bornes.endDate).getTime() + new Date(new Date(Date.parse($scope.bornes.startDate)) - new Date(Date.parse($scope.oldDate))).getTime());
+			$scope.oldDate = $scope.bornes.startDate;
 		}
 	};
 
@@ -417,7 +435,7 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 	$scope.savePlanning = function() {
 		var post = new Object();
 		post.name = $scope.finalValues.planName;
-		post.startDate = $scope.startDate;
+		post.startDate = $scope.bornes.startDate;
 		post.description = $scope.finalValues.planDescr;
 		if (($rootScope.session != null) && ($rootScope.session != "")) {
 			post.userID = $rootScope.session.id;
