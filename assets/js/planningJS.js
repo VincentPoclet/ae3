@@ -8,13 +8,13 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 	var directionsService = new google.maps.DirectionsService();
 	var markers = [];
 
-	$scope.planName = "";
-	$scope.planDescr = "";
+	$scope.finalValues = {};
 	$scope.planningPhase = 1;
 	$http({
 		url: "/api/event", 
 		method: "GET"
 	}).then(function successCallback(response) {
+
 		// console.log(response);
 		var markersTemps = [];
 		var content;
@@ -298,6 +298,7 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 				};
 			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 		}
+		// fullHeight();
 	}, function errorCallback(response) {
 		alert("Error loading events");
 	});
@@ -374,12 +375,12 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 	    	}
 		});
 
-	directionsService.route(request, function(result, status) {
-	    if (status == google.maps.DirectionsStatus.OK) {
-	     	directionsDisplay.setDirections(result);
-	    }
- 	});
-}
+		directionsService.route(request, function(result, status) {
+		    if (status == google.maps.DirectionsStatus.OK) {
+		     	directionsDisplay.setDirections(result);
+		    }
+	 	});
+	};
 
 
 
@@ -434,10 +435,10 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 
 	$scope.savePlanning = function() {
 		var post = new Object();
-		post.name = $scope.planName;
+		post.name = $scope.finalValues.planName;
 		post.startDate = $scope.startDate;
-		post.description = $scope.planDescr;
-		if ($rootScope.session != null) {
+		post.description = $scope.finalValues.planDescr;
+		if (($rootScope.session != null) && ($rootScope.session != "")) {
 			post.userID = $rootScope.session.id;
 		} else {
 			alert("Please connect.");
@@ -451,8 +452,17 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 				order: el.order
 			});
 		});
-		console.log(post);
-	}
+		// console.log(post);
+		$http({
+			url: "/api/planning", 
+			method: "POST",
+			data: post
+		}).then(function successCallback(response) {
+			console.log(response);
+		}, function errorCallback(response) {
+			console.log(response);
+		});
+	};
 
 	$timeout(function() {
 		$("#maxTen").hide();

@@ -77,7 +77,7 @@
 		      			<tbody id="bodyPlanning2">
 		      				<tr ng-repeat="x in checkedEvents">
 				          		<td>{{x.nomEvent}}</td>
-				          		<td>{{x.dateDebut | date:'dd/MM/yy HH:mm'}} </td>
+				          		<td>{{x.dateDebut | date:'dd/MM/yy HH:mm'}}</td>
 				          		<td><input ng-model="x.durationPlanned" type="text" class="form-control" placeholder="Durée..." /></td>
 				          		<td>
 				          			<div class="col-xs-12">
@@ -101,7 +101,7 @@
 			<div ng-switch-when="3">
 				<div class="panel-body">
 					<label class="label-control">Start Date :</label>
-					<input ng-blur="startChange();" type="text" class="form-control" ng-model="startDate" disabled />
+					<input ng-blur="startChange()" type="text" class="form-control" ng-model="startDate" disabled />
 					<label class="label-control">End Date :</label>
 					<input type="text" class="form-control" ng-model="endDate" disabled />
 					<div class="btn-group btn-group-justified">
@@ -116,9 +116,9 @@
 				<div class="panel-footer">
 					<p>Just a few more steps</p>
 					<label class="control-label">Planning Name</label>
-					<input ng-model="planName" type="text" class="form-control" placeholder="Name your planning !" />
+					<input ng-model="finalValues.planName" type="text" class="form-control" placeholder="Name your planning !" />
 					<label class="control-label">Planning Description</label>
-					<textarea ng-model="planDescr" class="form-control" placeholder="Enter a short description for your planning here :)"></textarea>
+					<textarea ng-model="finalValues.planDescr" class="form-control" placeholder="Enter a short description for your planning here :)"></textarea>
 				</div>
 			</div>
 		</div>

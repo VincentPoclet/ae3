@@ -32,6 +32,26 @@ app.config(function($routeProvider) {
 
 
 app.controller("indexController", function($scope, $rootScope, $http, $location) {
+
+	/* SELECT PLANNINGS TEST */
+	// $http({
+	// 	url: "/api/planning",
+	// 	method: "GET",
+	// 	params: {
+	//		// Mettre l'ID de l'user ici
+	// 		idUser: 3
+	// 	}
+	// }).then(function successCallback(response) {
+	// 	console.log(response);
+	// }, function errorCallback(response) {
+	// 	console.log(response);
+	// });
+
+
+
+
+
+
 	$scope.$on('$locationChangeStart', function(event) {
 		$scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
 		// $scope.includeMap = true;
@@ -75,6 +95,7 @@ app.controller("indexController", function($scope, $rootScope, $http, $location)
 			$scope.nomUser = "";
 			$scope.prenomUser = "";
 		}, function errorCallback(response) {
+			$rootScope.session = "";
 			$scope.session = false;
 			$scope.id = "";
 			$scope.nomUser = "";

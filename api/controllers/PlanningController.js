@@ -27,7 +27,8 @@ module.exports = {
 				if (err) {
 					return res.status(500).json({'err': err.message, 'data': row});
 				}
-				angular.forEach(req.param('checkedEvents'), function(el, i) {
+				req.param('checkedEvents').forEach(function (el, i) {
+				// angular.forEach(req.param('checkedEvents'), function(el, i) {
 					PlannedEvent.create({
 						planning: row.id,
 						event: el.eventID,
@@ -48,6 +49,39 @@ module.exports = {
 	},
 	delete: function(req, res) {
 
+	},
+	select: function(req, res) {
+		var result = {};
+		var nbPlan = 0;
+		var cmptPl = 0;
+		Planning.find({
+			user: req.param('idUser')
+		}).exec(function(err, row) {
+			if (err) {
+				return res.status(500).json({'err': err, 'data': row});
+			}
+			if (!row) {
+				return res.status(400).json({'err': 'No planning found', 'data': data});
+			}
+			result.plannings = row;
+			nbPlan = row.length;
+
+			// async.forEachOf(result.plannings, function(el, i, callback) {
+			result.plannings.forEach(function(el, i) {
+				cmptPl++;
+				PlannedEvent.find({
+					planning: el.id
+				}).exec(function(err, row) {
+					if (err) {
+						return res.status(500).json({'err': err, 'data': row});
+					}
+					result.plannings[i].events = row;
+					if (cmptPl == nbPlan) {
+						return res.status(200).json({'err': null, 'data': result});	
+					}
+				});
+			});
+		});
 	}
 };
 

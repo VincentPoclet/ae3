@@ -54,6 +54,8 @@ module.exports.routes = {
   'PUT /api/event':'EventsController.update',
   'GET /api/session':'SessionController.select',
   'DELETE /api/session':'SessionController.delete',
+  'POST /api/planning':'PlanningController.create',
+  'GET /api/planning':'PlanningController.select'
   // 'GET /api/user':'UserController.retrieve'
   // 'DELETE /api/user':'UserController.remove', etc... (+PUT)
 
