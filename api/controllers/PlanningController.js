@@ -74,15 +74,13 @@ module.exports = {
 						return res.status(500).json({'err': err, 'data': row});
 					}
 					result.plannings[i].events = row;
-					if (cmptPl == nbPlan) {
-						return res.status(200).json({'err': null, 'data': result});	
-					}
+					// if (cmptPl == nbPlan) {
+					// 	return res.status(200).json({'err': null, 'data': result});	
+					// }
 				});
 			});
+			return res.status(200).json({'err': null, 'data': result});
 		});
-		while (cmptPl != nbPlan) {
-			// Do Nothing...
-		}
 	}
 };
 
