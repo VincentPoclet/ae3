@@ -52,7 +52,7 @@ module.exports = {
 	},
 	select: function(req, res) {
 		var result = {};
-		var nbPlan = 0;
+		var nbPlan = 1;
 		var cmptPl = 0;
 		Planning.find({
 			user: req.param('idUser')
@@ -80,6 +80,9 @@ module.exports = {
 				});
 			});
 		});
+		while (cmptPl != nbPlan) {
+			// Do Nothing...
+		}
 	}
 };
 
