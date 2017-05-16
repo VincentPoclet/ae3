@@ -25,6 +25,10 @@ app.config(function($routeProvider) {
 		templateUrl : "templates/planningTemplate.html",
 		controller: "planningController",
 		controllerAs: "planningJS.js"
+	}).when("/acc", {
+		templateUrl : "templates/accountManagementTemplate.html",
+		controller: "accountManagementController",
+		controllerAs: "accountManagementJS.js"
 	}).otherwise({
 		templateUrl : "templates/deadLink.html"
 	});
@@ -55,7 +59,7 @@ app.controller("indexController", function($scope, $rootScope, $http, $location)
 	$scope.$on('$locationChangeStart', function(event) {
 		$scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
 		// $scope.includeMap = true;
-		if (!$scope.session) {
+		if (!$rootScope.session) {
 			//console.log("Fetch Session");
 			$http({
 				url: "/api/session",

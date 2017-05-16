@@ -44,9 +44,9 @@
 				</ul> 
 				<ul ng-switch="session" class="nav navbar-nav navbar-right">
 					<li ng-switch-when="false"><a href="#!/login">Login</a></li>
-					<li ng-switch-when="true" class="dropdown"><a href="#!/" class="dropdown-toggle" data-toggle="dropdown" role="button">Welcome {{nomUser}} {{prenomUser}} <span class="caret"></span></a>
+					<li ng-switch-when="true" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button">Welcome {{nomUser}} {{prenomUser}} <span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="#!/">Account managment</a></li>
+							<li><a href="#!/acc">Account managment</a></li>
 							<li><a ng-click="destroySession();" href="#!/">Log Out</a></li>
 						</ul>
 					</li>
@@ -93,4 +93,5 @@
 <script src="js/registerJS.js"></script>
 <script src="js/addEventJS.js"></script>
 <script src="js/planningJS.js"></script>
+<script src="js/accountManagementJS.js"></script>
 </html>

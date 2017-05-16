@@ -35,13 +35,33 @@ module.exports = {
 			});
 		});
 	},
-
-
-	// Modifications :
-		// Nom
-		// Prénom
-		// Email
-
+	update: function(req, res) {
+		var params = {
+			emailUser: req.param('emailUser')
+		};
+		if (req.param('nomUser')) {
+			params.nomUser = req.param('nomUser');
+		}
+		if (req.param('prenomUser')) {
+			params.prenomUser = req.param('prenomUser');
+		}
+		Users.update({
+			emailUser: req.param('emailUserOld')
+		}, params).exec(function(err, row) {
+			if (err) {
+				return res.status(500).json({'err': err.message, 'data': row});
+			}
+			if (!row) {
+				return res.status(400).json({'err': "User doesn't exist", 'data': null});
+			}
+			console.log("Updating Session - ");
+			req.session.user.email = row[0].emailUser;
+			req.session.user.nom = row[0].nomUser;
+			req.session.user.prenom = row[0].prenomUser;
+			console.log(req.session.user);
+			return res.status(200).json({'err': null, 'data': row});
+		});
+	},
 	select: function(req,res){
 		// console.log(req);
 		Users.findOne({
@@ -50,14 +70,14 @@ module.exports = {
 		}).exec(function(err, row) {
 			if (err) {
 				return res.status(500).json({'err': err.message, 'data': row});
-			} 
+			}
 			if (row) {
-				req.session.user = {'id': row.id, 'prenom': row.prenomUser, 'nom': row.nomUser};
+				req.session.user = {'id': row.id, 'prenom': row.prenomUser, 'nom': row.nomUser, 'email': row.emailUser};
 				console.log("Creating Session - ");
 				console.log(req.session.user);
 				return res.status(200).json({'err': null, 'data': row});
 			} else {
-				return res.status(400).json({'err': "User doesn't exists", 'data': null});
+				return res.status(400).json({'err': "User doesn't exist", 'data': null});
 			}
 		});
 	}
