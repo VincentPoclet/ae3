@@ -65,8 +65,6 @@ module.exports = {
 			}
 			result.plannings = row;
 			nbPlan = row.length;
-
-			// async.forEachOf(result.plannings, function(el, i, callback) {
 			result.plannings.forEach(function(el, i) {
 				cmptPl++;
 				PlannedEvent.find({

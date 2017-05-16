@@ -27,12 +27,20 @@ module.exports = {
 				if (err) {
 					return res.status(500).json({'err': err.message, 'data': row});
 				} 
+				console.log("Creating Session - ");
 				req.session.user = {'id': row.id, 'prenom': row.prenomUser, 'nom': row.nomUser};
 				console.log(req.session.user);
+				// console.log(req.session.user);
 				return res.status(200).json({'err': null, 'data': row});
 			});
 		});
 	},
+
+
+	// Modifications :
+		// Nom
+		// Prénom
+		// Email
 
 	select: function(req,res){
 		// console.log(req);
@@ -45,6 +53,7 @@ module.exports = {
 			} 
 			if (row) {
 				req.session.user = {'id': row.id, 'prenom': row.prenomUser, 'nom': row.nomUser};
+				console.log("Creating Session - ");
 				console.log(req.session.user);
 				return res.status(200).json({'err': null, 'data': row});
 			} else {
