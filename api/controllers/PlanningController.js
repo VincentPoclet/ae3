@@ -72,7 +72,7 @@ module.exports = {
 			nbPlan = row.length;
 			console.log("Parcours des " + nbPlan + " plannings");
 			result.plannings.forEach(function(el, i) {
-				cmptPl++;
+
 				console.log("Planning numéro " + cmptPl);
 				PlannedEvent.find({
 					planning: el.id
@@ -84,15 +84,15 @@ module.exports = {
 					}
 					console.log("Affectation");
 					result.plannings[i].events = row;
-					// if (cmptPl == nbPlan) {
-					// 	return res.status(200).json({'err': null, 'data': result});	
-					// }
 					console.log("Planning traité");
+					cmptPl++;
+					if (cmptPl == nbPlan) {
+						console.log("Envoi des données :");
+						console.log(result);
+						return res.status(200).json({'err': null, 'data': result});	
+					}
 				});
 			});
-			console.log(result);
-			console.log("Envoi des données :");
-			return res.status(200).json({'err': null, 'data': result});
 		});
 	}
 };
