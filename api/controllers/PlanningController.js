@@ -45,10 +45,33 @@ module.exports = {
 		});
 	},
 	update: function(req, res) {
-
+		Planning.update({
+			id: req.param('id')
+		}, {
+			name: req.param('name'),
+			descritpion: req.param('description')
+		}).exec(function(err, row) {
+			if (err) {
+				return res.status(500).json({'err': err, 'data': null});
+			}
+			if (!row) {
+				return res.status(400).json({'err': 'No plannings found according to criterias', 'data': null});
+			}
+			return res.status(200).json({'err': null, 'data': row});
+		});
 	},
 	delete: function(req, res) {
-
+		Planning.destroy({
+			id: req.param('id')
+		}).exec(function(err, row) {
+			if (err) {
+				return res.status(500).json({'err': err, 'data': null});
+			}
+			if (!row) {
+				return res.status(400).json({'err': 'No plannings found according to criterias', 'data': null});
+			}
+			return res.status(200).json({'err': null, 'data': row});
+		});
 	},
 	select: function(req, res) {
 		console.log("Start");
@@ -76,7 +99,7 @@ module.exports = {
 				console.log("Planning numéro " + cmptPl);
 				PlannedEvent.find({
 					planning: el.id
-				}).exec(function(err, row) {
+				}).populate('event').exec(function(err, row) {
 					console.log("Exécution du find terminée");
 					if (err) {
 						console.log("Erreur !");

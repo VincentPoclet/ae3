@@ -8,5 +8,92 @@
 }
 
 #bodyPlanning2 > tr > td {
-     vertical-align: middle;
+	 vertical-align: middle;
+}
+
+button.cstAccordion {
+	background-color: #eee;
+	color: #444;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	text-align: left;
+	border: none;
+	outline: none;
+	transition: 0.4s;
+}
+
+button.cstAccordion > div {
+	margin-top: -18px;
+	margin-right: -18px;
+	margin-bottom: -18px;
+}
+
+button.cstAccordion > div > div > a.updBtn {
+	/*position: fixed;*/
+	padding: 17px;
+	margin-top: -18px;
+	margin-bottom: -18px;
+	float: right;
+	right: 36px;
+	width: 5%;
+}
+
+button.cstAccordion > div > div > a.delBtn {
+	/*position: fixed;*/
+	padding: 17px;
+	margin-top: -18px;
+	margin-bottom: -18px;
+	float: right;
+	right: 18px;
+	width: 5%;
+}
+
+button.cstAccordion > div > div > a.cancelBtn {
+	/*position: fixed;*/
+	padding: 17px;
+	margin-top: -18px;
+	margin-bottom: -18px;
+	float: right;
+	right: 18px;
+	width: 5%;
+}
+
+button.cstAccordion > div > div > a.editBtn {
+	/*position: fixed;*/
+	padding: 17px;
+	margin-top: -18px;
+	margin-bottom: -18px;
+	float: right;
+	right: 36px;
+	width: 5%;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+button.cstAccordion.active, button.cstAccordion:hover {
+	background-color: #ddd;
+}
+
+div.cstPanel {
+	padding: 0 18px;
+	border: 2px solid #eee;
+	background-color: white;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out;
+}
+
+div.cstPanel > ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+div.cstPanel > ul > li > a {
+	padding: 17px;
+	margin-top: -18px;
+	margin-right: -18px;
+	margin-bottom: -18px;
+	float: right;
+	right: 18px;
 }

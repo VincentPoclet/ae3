@@ -29,6 +29,10 @@ app.config(function($routeProvider) {
 		templateUrl : "templates/accountManagementTemplate.html",
 		controller: "accountManagementController",
 		controllerAs: "accountManagementJS.js"
+	}).when("/accPlannings", {
+		templateUrl : "templates/accountPalnningsTemplate.html",
+		controller: "accountPlanningsController",
+		controllerAs: "accountPlanningsJS.js"
 	}).otherwise({
 		templateUrl : "templates/deadLink.html"
 	});

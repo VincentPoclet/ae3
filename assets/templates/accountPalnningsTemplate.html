@@ -1,0 +1,78 @@
+<!-- <div class="panel-group" id="accordion">
+	<div ng-repeat="x in plann.list" class="panel panel-primary">
+		<div class="palnel-heading">
+			<h4 class="panel-title">
+				<a onclick="javascript:void(0);" class="btn btn-default" data-toggle="collapse" data-parent="#accordion">
+					{{x.name}}
+				</a>
+			</h4>
+		</div>
+		<div id="{{x.id}}" class="panel-collapse collapse">
+			<div class="panel-body">
+				<ul>
+					<li ng-repeat="y in x.events">{{y.event.nomEvent}}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+ -->
+<div ng-repeat="x in plann.list">
+	<button class="cstAccordion">
+		<b>{{x.name}}</b>
+		<div ng-switch="plann.list[$index].mode">
+			<div ng-switch-when="consult">
+				<a ng-click="plann($index, $event)" class="btn btn-primary updBtn">
+					Edit
+				</a>
+				<a ng-click="delete($index, $event)" class="btn btn-danger delBtn">
+					Delete
+				</a>
+			</div>
+			<div ng-switch-when="modif">
+				<a ng-click="cancel($index, $event)" class="btn btn-danger cancelBtn">
+					<span class="glyphicon glyphicon-remove"></span>
+				</a>	
+				<a ng-click="upd($index, $event)" class="btn btn-success editBtn">
+					<span class="glyphicon glyphicon-ok"></span>
+				</a>				
+			</div>
+		</div>
+		
+	</button>
+	<div class="cstPanel">
+		<br />
+		<div class="form-group">
+			<label class="control-label col-xs-3">Planning Name</label>
+			<div ng-switch="plann.list[$index].mode">
+				<div ng-switch-when="consult">
+					<p ng-bind="plann.list[$index].name" class="col-xs-9"></p>
+				</div>
+				<div ng-switch-when="modif">
+					<input ng-model="plann.list[$index].upd.name" placeholder="{{plann.list[$index].name}}" class="col-xs-9" />
+				</div>
+			</div>
+		</div>
+		<br />
+		<div class="form-group">
+			<label class="control-label col-xs-3">Planning Description</label>
+			<div ng-switch="plann.list[$index].mode">
+				<div ng-switch-when="consult">
+					<p ng-bind="plann.list[$index].description" class="col-xs-9"></p>
+				</div>
+				<div ng-switch-when="modif">
+					<input ng-model="plann.list[$index].upd.description" placeholder="{{plann.list[$index].description}}" class="col-xs-9" />
+				</div>
+			</div>
+		</div>
+		<br />
+		<label class="control-label col-xs-3">Events :</label>
+		<br />
+		<ul>
+			<li class="well" ng-repeat="y in x.events">
+				<b>{{y.event.nomEvent}}</b> for <b>{{y.duration}}</b> minuts
+				<a ng-click="plannEv(y.event.id, $event)" class="btn btn-danger"><span class="glyphicon glyphicon-ban-circle"></span></a>
+			</li>
+		</ul>
+	</div>
+</div>
