@@ -44,7 +44,13 @@ module.exports = {
 			});
 		});
 	},
+
+
 	update: function(req, res) {
+		// console.log(req);
+		// console.log(req.param('id'));
+		// console.log(req.param('name'));
+		// console.log(req.param('description'));
 		Planning.update({
 			id: req.param('id')
 		}, {
@@ -60,6 +66,8 @@ module.exports = {
 			return res.status(200).json({'err': null, 'data': row});
 		});
 	},
+
+
 	delete: function(req, res) {
 		Planning.destroy({
 			id: req.param('id')
@@ -73,6 +81,22 @@ module.exports = {
 			return res.status(200).json({'err': null, 'data': row});
 		});
 	},
+
+	removeEvent: function(req, res) {
+		PlannedEvent.destroy({
+			planning: req.param('idPlanning'),
+			event: req.param('idEvent')
+		}).exec(function(err, row) {
+			if (err) {
+				return res.status(500).json({'err': err, 'data': null});
+			}
+			if (!row) {
+				return res.status(400).json({'err': 'No plannings found according to criterias', 'data': null});
+			}
+			return res.status(200).json({'err': null, 'data': row});
+		});
+	},
+
 	select: function(req, res) {
 		console.log("Start");
 		var result = {};

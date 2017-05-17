@@ -71,7 +71,7 @@
 		<ul>
 			<li class="well" ng-repeat="y in x.events">
 				<b>{{y.event.nomEvent}}</b> for <b>{{y.duration}}</b> minuts
-				<a ng-click="plannEv(y.event.id, $event)" class="btn btn-danger"><span class="glyphicon glyphicon-ban-circle"></span></a>
+				<a ng-click="delPlannEv($index, $parent.$index, $event)" class="btn btn-danger"><span class="glyphicon glyphicon-ban-circle"></span></a>
 			</li>
 		</ul>
 	</div>

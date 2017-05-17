@@ -48,7 +48,21 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 		$event.stopPropagation();
 	};
 
-	$scope.plannEv = function(idEv, $event) {
+	$scope.delPlannEv = function(idEv, idPlan, $event) {
+		$http({
+			url: '/api/planning/event',
+			method: 'DELETE',
+			data: {
+				idPlanning: $scope.plann.list[idPlan].id,
+				idEvent: $scope.plann.list[idPlan].events[idEv].event.id,
+			}
+		}).then(function successCallback(response) {
+			$scope.plann.list[idPlan].events = $scope.plann.list[idPlan].events.filter(function(e, i) {
+				return (i != idEv);
+			});
+		}, function errorCallback(response) {
+			console.log('nok');
+		});
 		console.log("EV - edit " + idEv);
 		$event.stopPropagation();
 	};
@@ -58,9 +72,9 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 			url: "/api/planning",
 			method: "PUT",
 			data: {
-				id: $scope.plan.list[idPlan].id,
-				name: $scope.plan.list[idPlan].name,
-				description: $scope.plan.list[idPlan].description
+				id: $scope.plann.list[idPlan].id,
+				name: $scope.plann.list[idPlan].upd.name,
+				description: $scope.plann.list[idPlan].upd.description
 			},
 		}).then(function successCallback(response) {
 			console.log("updated !");
@@ -81,7 +95,19 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 	};
 
 	$scope.delete = function(idPlan, $event) {
-
+		$http({
+			url: "/api/planning",
+			method: "DELETE",
+			data: {
+				id: $scope.plann.list[idPlan].id
+			},
+		}).then(function successCallback(response) {
+			$scope.plann.list = $scope.plann.list.filter(function(e, i) {
+				return (i != idPlan);
+			});
+		}, function errorCallback(response) {
+			console.log("nok");
+		});
 		$event.stopPropagation();
 	};
 });
