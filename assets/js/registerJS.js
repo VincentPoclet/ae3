@@ -1,5 +1,6 @@
 // 'use strict';
 angular.module("ae3").controller("registerController", function($scope, $http, $location) {
+	setTabs("tab03");
 	$("#wrcred").hide();
 	$scope.register = function() {
 		// alert("go !");

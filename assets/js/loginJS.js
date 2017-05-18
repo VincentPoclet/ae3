@@ -1,6 +1,7 @@
 // 'use strict';
 angular.module("ae3").controller("loginController", function($scope, $http, $location) {
 	$("#wrcred").hide();
+	setTabs("tab03");
 	$scope.login = function() {
 		// alert("go !");
 		$http({
@@ -12,9 +13,11 @@ angular.module("ae3").controller("loginController", function($scope, $http, $loc
 			}
 		}).then(function successCallback(response) {
 			$location.url("/");
+			toast("Welcome :)", 'green');
 		}, function errorCallback(response) {
 			console.log("nok");
-			$("#wrcred").show('slow');
+			toast("Wrong credentials.", 'red');
+			// $("#wrcred").show('slow');
 		});
 	};
 });

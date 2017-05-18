@@ -1,5 +1,6 @@
 // 'use strict';
 angular.module("ae3").controller("accountManagementController", function($scope, $http, $location, $rootScope) {
+	setTabs("tab04", true, 1);
 	$scope.userData = {};
 	$scope.modif = {};
 	$scope.modif.mode = "consult";
@@ -14,6 +15,7 @@ angular.module("ae3").controller("accountManagementController", function($scope,
 		$scope.userData.prenom = response.data.res.prenom;
 		$scope.modif.prenom = response.data.res.prenom;
 	}, function errorCallback(response) {
+		toast("Une erreur est survenue.", 'red');
 		console.log("nok");
 	});
 	$scope.toggleMode = function() {
@@ -33,7 +35,9 @@ angular.module("ae3").controller("accountManagementController", function($scope,
 		}).then(function successCallback(response) {
 			$rootScope.session = "";
 			$location.path("/");
+			toast("Information updated !", 'green');
 		}, function errorCallback(response) {
+		toast("Une erreur est survenue.", 'red');
 		});
 	};
 });

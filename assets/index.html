@@ -10,6 +10,10 @@
 	<script src="lib/bootstrap/js/bootstrap.js"></script>
 	<script async defer	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2y0e-JdpOMMgJkwiN16jZExQ2fINrq2E"></script>
 	<link rel="stylesheet" href="styles/main.css">
+
+	<!-- Include iziToast -->
+	<script src="lib/iziToast/dist/js/iziToast.min.js"></script>
+	<link rel="stylesheet" href="lib/iziToast/dist/css/iziToast.min.css" />
 </head>
 <body ng-app="ae3" ng-controller="indexController">
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -25,8 +29,8 @@
 			</div>
 			<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="#!/">Home</a></li>
-					<li><a href="#!/planning">Planning</a></li>
+					<li id="tab01" class="active navtabs"><a href="#!/">Home</a></li>
+					<li id="tab02" class="navtabs"><a href="#!/planning">Planning</a></li>
 					<!-- <li><a href="#about">About</a></li>
 					<li><a href="#contact">Contact</a></li>
 					<li class="dropdown">
@@ -43,12 +47,12 @@
 					</li> -->
 				</ul> 
 				<ul ng-switch="session" class="nav navbar-nav navbar-right">
-					<li ng-switch-when="false"><a href="#!/login">Login</a></li>
-					<li ng-switch-when="true" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button">Welcome {{nomUser}} {{prenomUser}} <span class="caret"></span></a>
+					<li id="tab03" class="navtabs" ng-switch-when="false"><a href="#!/login">Login</a></li>
+					<li id="tab04" class="navtabs" ng-switch-when="true" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button">Welcome {{nomUser}} {{prenomUser}} <span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="#!/acc">Account managment</a></li>
-							<li><a href="#!/accPlannings">My plannings</a></li>
-							<li><a ng-click="destroySession();" href="#!/">Log Out</a></li>
+							<li id="tab04_1" class="navtabs"><a href="#!/acc">Account managment</a></li>
+							<li id="tab04_2" class="navtabs"><a href="#!/accPlannings">My plannings</a></li>
+							<li id="tab04_3" class="navtabs"><a ng-click="destroySession();" href="#!/">Log Out</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -87,7 +91,7 @@
 	$(document).ready(fullHeight());
 </script>
 
-
+<script src="js/util.js"></script>
 <script src="js/indexJS.js"></script>
 <script src="js/mainJS.js"></script>
 <script src="js/loginJS.js"></script>

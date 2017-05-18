@@ -2,6 +2,7 @@
 
 
 angular.module("ae3").controller("planningController", function($scope, $rootScope, $http, $compile, $timeout) {
+	setTabs("tab02");
 	var map;
 	var route;
 	var directionsDisplay;
@@ -228,7 +229,8 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 							$scope.events.push(response.data.data);
 							afficherEvents();
 						}, function errorCallback(response) {
-							alert(response);
+							toast("Une erreur est survenue.", 'red');
+							// alert(response);
 					});
 				}
 
@@ -245,7 +247,8 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 							$scope.events.push(response.data.data);
 							afficherEvents();
 						}, function errorCallback(response) {
-							alert(response);
+							toast("Une erreur est survenue.", 'red');
+							// alert(response);
 					});
 				}
     			
@@ -266,7 +269,7 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 							
 							afficherEvents();
 						}, function errorCallback(response) {
-							alert("This event is already removed. Please refresh the web page (F5).");
+							toast("This event is already removed. Please refresh the web page (F5).", 'red');
 						});
     			}
 			});
@@ -281,7 +284,8 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 		}
 		// fullHeight();
 	}, function errorCallback(response) {
-		alert("Error loading events");
+		toast("Une erreur est survenue.", 'red');
+		// alert("Error loading events");
 	});
 	
 
@@ -440,7 +444,8 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 		if (($rootScope.session != null) && ($rootScope.session != "")) {
 			post.userID = $rootScope.session.id;
 		} else {
-			alert("Please connect.");
+			toast("You must be logged in to continue.", 'red');
+			// alert("Please connect.");
 			return false;
 		}
 		post.checkedEvents = [];
@@ -457,9 +462,10 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 			method: "POST",
 			data: post
 		}).then(function successCallback(response) {
-			console.log(response);
+			toast("Planning created !", 'green');
 		}, function errorCallback(response) {
-			console.log(response);
+			toast("Une erreur est survenue.", 'red');
+
 		});
 	};
 

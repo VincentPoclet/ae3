@@ -4,6 +4,7 @@
 
 
 angular.module("ae3").controller("accountPlanningsController", function($scope, $http, $location, $rootScope, $timeout) {
+	setTabs("tab04", true, 2);
 	$scope.plann = {};
 	$http({
 		url: '/api/planning',
@@ -37,8 +38,9 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 					}
 				}
 			}
-		});		
+		});
 	}, function errorCallback(response) {
+		toast("Une erreur est survenue.", 'red');
 		console.log("nok");
 	});
 
@@ -60,7 +62,9 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 			$scope.plann.list[idPlan].events = $scope.plann.list[idPlan].events.filter(function(e, i) {
 				return (i != idEv);
 			});
+			toast("Event removed.", 'green');
 		}, function errorCallback(response) {
+			toast("Une erreur est survenue.", 'red');
 			console.log('nok');
 		});
 		console.log("EV - edit " + idEv);
@@ -81,8 +85,10 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 			$scope.plann.list[idPlan].name = $scope.plann.list[idPlan].upd.name;
 			$scope.plann.list[idPlan].description = $scope.plann.list[idPlan].upd.description;
 			$scope.plann.list[idPlan].mode = 'consult';
+			toast("Planning updated.", 'green');
 		}, function errorCallback(response) {
 			console.log("nok");
+			toast("Une erreur est survenue.", 'red');
 		});
 		$event.stopPropagation();
 	};
@@ -105,8 +111,10 @@ angular.module("ae3").controller("accountPlanningsController", function($scope, 
 			$scope.plann.list = $scope.plann.list.filter(function(e, i) {
 				return (i != idPlan);
 			});
+			toast("Planning deleted.", 'green');
 		}, function errorCallback(response) {
 			console.log("nok");
+			toast("Une erreur est survenue.", 'red');
 		});
 		$event.stopPropagation();
 	};

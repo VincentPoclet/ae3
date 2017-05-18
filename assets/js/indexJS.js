@@ -61,7 +61,8 @@ app.controller("indexController", function($scope, $rootScope, $http, $location)
 
 
 	$scope.$on('$locationChangeStart', function(event) {
-		$scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
+		// Code pour gérer la map sur le planning ET sur l'écran principal
+		// $scope.includeMap = ($location.url().substr(0, 9) == "/planning" || $location.url() == "/");
 		// $scope.includeMap = true;
 		if (!$rootScope.session) {
 			//console.log("Fetch Session");
@@ -97,6 +98,7 @@ app.controller("indexController", function($scope, $rootScope, $http, $location)
 			url: "/api/session",
 			method: "DELETE"
 		}).then(function successCallback(response) {
+			toast("You successfully logged out", 'blue');
 			$rootScope.session = "";
 			$scope.session = false;
 			$scope.id = "";

@@ -3,6 +3,7 @@
 
 
 angular.module("ae3").controller("mainController", function($scope, $http, $compile) {
+	setTabs("tab01");
 	$http({
 		url: "/api/event", 
 		method: "GET"
@@ -220,8 +221,10 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							infoWindow.close();
 							$scope.events.push(response.data.data);
 							afficherEvents();
+							toast("Event added.", 'green');
 						}, function errorCallback(response) {
-							alert(response);
+							toast("Une erreur est survenue.", 'red');
+							// alert(response);
 					});
 				}
 
@@ -265,8 +268,9 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 		   					});
 
 							afficherEvents();
+							toast("Event deleted.", 'red');
 						}, function errorCallback(response) {
-							alert("This event is already removed. Please refresh the web page (F5).");
+							toast("This event is already removed. Please refresh the web page (F5).", 'yellow');
 						});
     			}
 			});
