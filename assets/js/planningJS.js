@@ -8,14 +8,15 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 	var directionsDisplay;
 	var directionsService = new google.maps.DirectionsService();
 	var markers = [];
-
+	$scope.srch = {};
+	$scope.srch.more = false;
 	$scope.finalValues = {};
 	$scope.planningPhase = 1;
 	$http({
 		url: "/api/event", 
 		method: "GET"
 	}).then(function successCallback(response) {
-
+		
 		// console.log(response);
 		var markersTemps = [];
 		var content;
@@ -282,6 +283,7 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 				};
 			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 		}
+		$scope.eventsClean = $scope.events;
 		// fullHeight();
 	}, function errorCallback(response) {
 		toast("Une erreur est survenue.", 'red');
@@ -473,5 +475,33 @@ angular.module("ae3").controller("planningController", function($scope, $rootSco
 		$("#maxTen").hide();
 		fullHeight();
 	});
+	$scope.search = function() {
+		// var dtSt = Date.parse($scope.srch.stDate);
+		// var dtEn = Date.parse($scope.srch.enDate);
+		// var dtEv = null;
+		// console.log("Search criterias :");
+		// console.log($scope.srch);
+		// console.log(dtSt);
+		// console.log(dtEn);
 
+		// console.log("Search by :");
+		if (!$scope.srch.more) {
+			// console.log("Name");
+			$scope.events = $scope.eventsClean.filter(function(e, i) {
+				return (!$scope.srch.name || (e.nomEvent.indexOf($scope.srch.name) !== -1));
+			});
+		} else {
+			// console.log("Name, town, starting date and ending date");
+			$scope.events = $scope.eventsClean.filter(function(e, i) {
+				// console.log(e.dateDebut);
+				// console.log(dtEv);
+				return (
+					(!$scope.srch.name || (e.nomEvent.indexOf($scope.srch.name) !== -1))
+					&& (!$scope.srch.town || (e.ville == $scope.srch.town))
+					&& (!$scope.srch.stDate || (Date.parse(e.dateDebut) >= Date.parse($scope.srch.stDate)))
+					&& (!$scope.srch.enDate || (Date.parse(e.dateDebut) <= Date.parse($scope.srch.enDate)))
+				);
+			});
+		}
+	}
 });

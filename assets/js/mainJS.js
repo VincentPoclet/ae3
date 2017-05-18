@@ -4,6 +4,8 @@
 
 angular.module("ae3").controller("mainController", function($scope, $http, $compile) {
 	setTabs("tab01");
+	$scope.srch = {};
+	$scope.srch.more = false;
 	$http({
 		url: "/api/event", 
 		method: "GET"
@@ -19,15 +21,13 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 		
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (p) {
-
 				var LatLng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
 				var mapOptions = {
-						center: LatLng,
-						zoom: 13,
-						mapTypeId: google.maps.MapTypeId.ROADMAP
+					center: LatLng,
+					zoom: 13,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
 				};
 				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-				
 				afficherEvents();				
 				
 				// ###################################################################################################
@@ -84,7 +84,6 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 						infoWindow.open(map, marker);
 					});
 					
-					
 					content = `
 					<div>
 					<button ng-click='modifyButton(`+location.lng()+`,`+location.lat()+`)' class='btn btn-primary'>Modifier</button>
@@ -111,9 +110,9 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 
 				// Range tous les marqueurs dans un tableau
 				function setMapOnAll(map,markers) {
-				  for (var i = 0; i < markers.length; i++) {
-				    markers[i].setMap(map);
-				  }
+					for (var i = 0; i < markers.length; i++) {
+						markers[i].setMap(map);
+					}
 				}
 
 				// Supprime tous les markers de la map 
@@ -125,10 +124,10 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 
 				// Range tous les infoWindow dans un tableau
 				function setInfoWindowOnAll(map,infoWindow) {
-				  for (var i = 1; i < infoWindow.length; i++) {
-				    infoWindow[i].close();
-				    console.log('fermé');
-				  }
+					for (var i = 1; i < infoWindow.length; i++) {
+						infoWindow[i].close();
+						console.log('fermé');
+					}
 				}
 
 
@@ -198,6 +197,8 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				// ###################################################################################################
 
 				$scope.addEvent = function(longitude,lattitude) {
+					console.log($scope.dateDebut);
+					console.log($scope.dateFin);
 					var newLongEvent = Number((longitude).toPrecision(6));
     				var newLattEvent = Number((lattitude).toPrecision(6));
 					clearInfoWindow(infoWindow);
@@ -245,7 +246,7 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 					});
 				}
     			
-    			$scope.deleteButton = function(longEvent,lattEvent){
+    			$scope.deleteButton = function(longEvent,lattEvent) {
     				var newLongEvent = Number((longEvent).toPrecision(6));
     				var newLattEvent = Number((lattEvent).toPrecision(6));
     				$http({
@@ -271,10 +272,11 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 							toast("Event deleted.", 'red');
 						}, function errorCallback(response) {
 							toast("This event is already removed. Please refresh the web page (F5).", 'yellow');
-						});
+						}
+					);
     			}
 			});
-		}else { // si la position n'est pas disponible on affiche paris 
+		} else { // si la position n'est pas disponible on affiche paris 
 			var LatLng = new google.maps.LatLng(48.858377,2.294460);
 				var mapOptions = {
 						center: LatLng,
@@ -283,8 +285,38 @@ angular.module("ae3").controller("mainController", function($scope, $http, $comp
 				};
 			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 		}
+		$scope.eventsClean = $scope.events;
 	}, function errorCallback(response) {
 		alert("Error loading events");
 	});
 
+	$scope.search = function() {
+		// var dtSt = Date.parse($scope.srch.stDate);
+		// var dtEn = Date.parse($scope.srch.enDate);
+		// var dtEv = null;
+		// console.log("Search criterias :");
+		// console.log($scope.srch);
+		// console.log(dtSt);
+		// console.log(dtEn);
+
+		// console.log("Search by :");
+		if (!$scope.srch.more) {
+			// console.log("Name");
+			$scope.events = $scope.eventsClean.filter(function(e, i) {
+				return (!$scope.srch.name || (e.nomEvent.indexOf($scope.srch.name) !== -1));
+			});
+		} else {
+			// console.log("Name, town, starting date and ending date");
+			$scope.events = $scope.eventsClean.filter(function(e, i) {
+				// console.log(e.dateDebut);
+				// console.log(dtEv);
+				return (
+					(!$scope.srch.name || (e.nomEvent.indexOf($scope.srch.name) !== -1))
+					&& (!$scope.srch.town || (e.ville == $scope.srch.town))
+					&& (!$scope.srch.stDate || (Date.parse(e.dateDebut) >= Date.parse($scope.srch.stDate)))
+					&& (!$scope.srch.enDate || (Date.parse(e.dateDebut) <= Date.parse($scope.srch.enDate)))
+				);
+			});
+		}
+	}
 });

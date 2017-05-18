@@ -6,9 +6,38 @@
 		<div class="panel-body">
 			<div class="form-inline">
 				<div class="input-group col-xs-12">
-					<input type="text" class="form-control" placeholder="Search..." />
-					<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+					<input ng-change="search();" ng-model="srch.name" type="text" class="form-control" placeholder="Search..." />
+					<div class="input-group-btn">
+						<button ng-click="srch.more = (!srch.more); search(); $scope.srch.town = '';" class='btn btn-default'>	
+							<div ng-switch="srch.more">
+								<span ng-switch-when="false" class="glyphicon glyphicon-plus"></span>
+								<span ng-switch-when="true" class="glyphicon glyphicon-minus"></span>
+							</div>
+						</button>
+<!-- 						<button ng-disabled="!srch.more" ng-click="search();" class='btn btn-default'>
+							<span class="glyphicon glyphicon-search"></span>
+						</button> -->
+					</div>
 				</div>	
+			</div>
+			<div class="srchmore" ng-show="srch.more">
+				<div class="form-group">
+					<label class="control-label">
+						Town
+					</label>
+					<!-- <input ng-model="srcg.town" class="form-control" type="text" /> -->
+					<select ng-change="search();" ng-model="srch.town" class="form-control" ng-options="event.ville as event.ville for event in eventsClean | unique:'ville'">
+						<option value="0"></option>
+					</select>
+					<label class="control-label">
+						Start date
+					</label>
+					<input ng-change="search();" ng-model="srch.stDate" class="form-control" type="datetime-local" />
+					<label class="control-label">
+						End date
+					</label>
+					<input ng-change="search();" ng-model="srch.enDate" class="form-control" type="datetime-local" />
+				</div>
 			</div>
 		</div>
 		<div class="panel-footer">
@@ -19,6 +48,7 @@
 			        <th>Date de début</th>
       			</thead>
       			<tbody>
+      				<!-- <tr ng-repeat="x in events | filter:{nomEvent: srch.name} "> -->
       				<tr ng-repeat="x in events">
 		          		<td>{{x.nomEvent}}</td>
 		          		<td>{{x.ville}}</td>

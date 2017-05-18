@@ -97,3 +97,13 @@ div.cstPanel > ul > li > a {
 	float: right;
 	right: 18px;
 }
+
+.srchmore {
+	padding: 8px;
+	border: 2px solid #eee;
+	border-radius: 4px;
+	/*border-bottom: 2px solid #eee;*/
+	/*border-left: 2px solid #eee;*/
+	/*border-right: 2px solid #eee;*/
+	/*border-top: 2px solid #eee;*/
+}

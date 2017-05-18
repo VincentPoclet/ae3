@@ -3,6 +3,8 @@ angular.module("ae3").controller("addEventController", function($scope, $http, $
 	$("#wrcred").hide();
 	$scope.addEvent = function() {
 		// alert("go !");
+		console.log($scope.dateDebut);
+		console.log($scope.dateFin);
 		$http({
 			url: "/api/event", 
 			method: "POST",
