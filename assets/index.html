@@ -4,6 +4,7 @@
 	<title>AE3 - Autant En Emporte l'Event</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<script src="lib/jquery.min.js"></script>
 	<script src="lib/angular.min.js"></script>
 	<script src="lib/angular-route.min.js"></script>
@@ -15,7 +16,7 @@
 	<script src="lib/iziToast/dist/js/iziToast.min.js"></script>
 	<link rel="stylesheet" href="lib/iziToast/dist/css/iziToast.min.css" />
 </head>
-<body ng-app="ae3" ng-controller="indexController">
+<body id="indexController" ng-app="ae3" ng-controller="indexController">
 	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container">
 			<div class="navbar-header">
@@ -31,6 +32,7 @@
 				<ul class="nav navbar-nav">
 					<li id="tab01" class="active navtabs"><a href="#!/">Home</a></li>
 					<li id="tab02" class="navtabs"><a href="#!/planning">Planning</a></li>
+					<li id="tab05" class="navtabs"><a href="#!/addEvent">Add Multiple Events</a></li>
 					<!-- <li><a href="#about">About</a></li>
 					<li><a href="#contact">Contact</a></li>
 					<li class="dropdown">

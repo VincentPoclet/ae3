@@ -1,38 +1,48 @@
-<div class='col-md-6 col-md-offset-3 col-xs-12'>
+<div class='col-xs-12'>
 	<div class='panel panel-primary'>
 		<div class='panel-heading'>
-			<div class='panel-title'>Log In</div>
+			<div class='panel-title'>Import Multiple Events</div>
 		</div>
 		<div class='panel-body'>
-			<div id='wrcred' class='alert alert-danger'><b>This event already exists.</b></div>
-			<label class='control-label'>Name</label>
-			<input ng-model='nomEvent' class='form-control' type='text' />
-			<label class='control-label'>Address</label>
-			<input ng-model='address' class='form-control' type='text' />
-			<label class='control-label'>Postal Code</label>
-			<input ng-model='codePostal' class='form-control' type='text' />
-			<label class='control-label'>City</label>
-			<input ng-model='ville' class='form-control' type='text' />
-			<label class='control-label'>Start Date</label>
-			<input ng-model='dateDebut' class='form-control' type='text' />
-			<label class='control-label'>End Date</label>
-			<input ng-model='dateFin' class='form-control' type='text' />
-
-			<label class='control-label'>Event Type</label>
-			<select ng-model='typeEvent' class='form-control'>
-				<option value='0'>Museum</option>
-				<option value='1'>Concert</option>
-				<option value='2'>Other</option>
-			</select>
-			<label class='control-label'>Description</label>
-			<textarea ng-model='descEvent' class='form-control'></textarea>
-			<label class='control-label'>Longitude</label>
-			<input ng-model='longEvent' class='form-control' type='text' />
-			<label class='control-label'>Lattitude</label>
-			<input ng-model='lattEvent' class='form-control' type='text' />
+			<label class='control-label'>Select a .csv file</label>
+			<input id="csvFileInput" onchange="handleFile(this.files);" type="file" accept=".csv" />
+		</div>
+		<div ng-show="file.done">
+			<table class="table table-stripped table-bordered">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Adress</th>
+						<th>Postal Code</th>
+						<th>City</th>
+						<th>Starting Date</th>
+						<th>Ending Date</th>
+						<th>Event Type</th>
+						<th>Event Description</th>
+						<th>Longitude</th>
+						<th>Latitude</th>
+						<th>Insert</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="x in file.events" ng-click="toggleEvent(x);">
+						<td>{{x[0]}}</td>
+						<td>{{x[1]}}</td>
+						<td>{{x[2]}}</td>
+						<td>{{x[3]}}</td>
+						<td>{{x[4]}}</td>
+						<td>{{x[5]}}</td>
+						<td>{{x[6]}}</td>
+						<td>{{x[7]}}</td>
+						<td>{{x[8]}}</td>
+						<td>{{x[9]}}</td>
+						<td><input class="checkbox" type="checkbox" ng-checked="x[10]" /></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		<div class='panel-footer text-center'>
-			<button ng-click='addEvent()' class='btn btn-primary'>Submit</button>
+			<button ng-click='submit()' class='btn btn-primary'>Submit</button>
 		</div>
 	</div>
 </div>

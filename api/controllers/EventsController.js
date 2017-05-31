@@ -6,6 +6,39 @@
  */
 
 module.exports = {
+	createMulti: function(req, res) {
+		var arr = req.param('events').filter(function(e) {
+			return e[10];
+		}).map(function(e) {
+			return e.slice(0, -1);
+		});
+		var arrOfObj = [];
+		var obj = {};
+		arr.forEach(function(data){
+			obj.nomEvent = data[0];
+			obj.adresse = data[1];
+			obj.codePostal = data[2];
+			obj.ville = data[3];
+			obj.dateDebut = data[4];
+			obj.dateFin = data[5];
+			obj.typeEvent = data[6];
+			obj.descEvent = data[7];
+			obj.longEvent = data[8];
+			obj.lattEvent = data[9];
+			arrOfObj.push(obj);
+			obj = {};
+		});
+
+		console.log(arr);
+		console.log(arrOfObj);
+		Events.create(arrOfObj).exec(function(err, row) {
+			if (err) {
+				return res.status(500).json({'err': err.message, 'data': row});
+			}
+			return res.status(200).json({'err': null, 'data': row});
+		});
+	},
+
 	create: function(req, res) {
 		Events.findOne({
 			nomEvent: req.param('nomEvent'),
